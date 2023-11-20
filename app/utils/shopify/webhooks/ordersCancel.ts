@@ -20,6 +20,8 @@ export async function webbhook_oredersCancel(shop: string, payload: unknown){
     console.log("Cancel order because it is Consors Finanzierung:", orderData)
   const createdShopifyOrderCancelUnhandled = await createShopifyOrderCancelUnhandled(shop, orderData.id, orderData.admin_graphql_api_id, orderData.current_total_price)
   console.log("createdShopifyOrderCanceldUnhandled", createdShopifyOrderCancelUnhandled)
+  }else{
+    console.log("keine Consors Finanzierung")
   }
 }
 
