@@ -1,14 +1,20 @@
 # For development
 
+
 To set the env Var:
 ```bash
-set DATABASE_URL=mysql://root:oY8io2Shshoo9Eix@localhost:3306/devDb
+set DATABASE_URL=mysql://root:1WrPZqlCnk4CHbpd31cq@localhost:3306/devDb
 ```
 
 to start up the dev db:
 ```bash
 docker compose -f devDB.compose.yml
 ```
+docker exec -it e-bike_db mysql -u root -p
+docker exec -it cons-f-dev_db mysql -u root -p
+use cons-f-dev;
+show * from Config;
+USE e-bike;
 
 
 

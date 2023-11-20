@@ -103,6 +103,6 @@ model Config {
   apiKey          String
   passwort        String
   paymentHandle   String
-  active          Boolean @default(false)
+//  active          Boolean @default(false)
   minBestellWert  Int @default(11000)
 }
