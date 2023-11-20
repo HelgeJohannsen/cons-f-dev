@@ -69,13 +69,6 @@ model Session {
   userId      BigInt?
 }
 
-model Order {
-  id          Int      @id @default(autoincrement())
-  orderId     String  // Could be @id if typed correctly https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  shop        String
-  createdAt   DateTime  @default(now())
-}
-
 model Checkout {
   uuid            String  @id
   shop            String
@@ -110,5 +103,6 @@ model Config {
   apiKey          String
   passwort        String
   paymentHandle   String
+  active          Boolean @default(false)
   minBestellWert  Int @default(11000)
 }
