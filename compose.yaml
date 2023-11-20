@@ -30,7 +30,7 @@ services:
     image: mariadb:10
     restart: unless-stopped
     volumes:
-      - ../databaseData/motorland:/var/lib/mysql  # TODO: change me for new instnaces
+      - ../databaseData/cons-f-dev:/var/lib/mysql  # TODO: change me for new instnaces
     environment:
       - MARIADB_INITDB_SKIP_TZINFO=true
         #  - TZ=Europe/Berlin
