@@ -18,11 +18,9 @@ const orderCreated = z.object({
   
 export async function webbhook_oredersCreate(shop: string, payload: unknown){
   const data = payload?.valueOf()
-  
   console.log(data)  // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const orderData = orderCreated.parse(data)
   console.log("parsed oderData", orderData)
-
   const consorsUsed = await getConsorsused(shop, orderData.admin_graphql_api_id)
   console.log("consorsUsed", consorsUsed)
 
