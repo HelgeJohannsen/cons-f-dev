@@ -1,0 +1,119 @@
+2023-10-19T10:02:49.744063+00:00 app[web.1]: db Create:  NodeResponse [Response] {
+
+2023-10-19T10:02:49.744073+00:00 app[web.1]:   size: 0,
+
+2023-10-19T10:02:49.744074+00:00 app[web.1]:   [Symbol(Body internals)]: {
+
+2023-10-19T10:02:49.744074+00:00 app[web.1]:     body: ReadableStream {
+
+2023-10-19T10:02:49.744075+00:00 app[web.1]:       _state: 'readable',
+
+2023-10-19T10:02:49.744075+00:00 app[web.1]:       _reader: undefined,
+
+2023-10-19T10:02:49.744075+00:00 app[web.1]:       _storedError: undefined,
+
+2023-10-19T10:02:49.744076+00:00 app[web.1]:       _disturbed: false,
+
+2023-10-19T10:02:49.744076+00:00 app[web.1]:       _readableStreamController: [ReadableStreamDefaultController]
+
+2023-10-19T10:02:49.744077+00:00 app[web.1]:     },
+
+2023-10-19T10:02:49.744077+00:00 app[web.1]:     type: 'text/plain;charset=UTF-8',
+
+2023-10-19T10:02:49.744077+00:00 app[web.1]:     size: 43,
+
+2023-10-19T10:02:49.744078+00:00 app[web.1]:     boundary: null,
+
+2023-10-19T10:02:49.744078+00:00 app[web.1]:     disturbed: false,
+
+2023-10-19T10:02:49.744078+00:00 app[web.1]:     error: null
+
+2023-10-19T10:02:49.744079+00:00 app[web.1]:   },
+
+2023-10-19T10:02:49.744079+00:00 app[web.1]:   [Symbol(Response internals)]: {
+
+2023-10-19T10:02:49.744079+00:00 app[web.1]:     url: undefined,
+
+2023-10-19T10:02:49.744079+00:00 app[web.1]:     status: 200,
+
+2023-10-19T10:02:49.744080+00:00 app[web.1]:     statusText: '',
+
+2023-10-19T10:02:49.744080+00:00 app[web.1]:     headers: {
+
+2023-10-19T10:02:49.744080+00:00 app[web.1]:       'access-control-allow-origin': '*',
+
+2023-10-19T10:02:49.744081+00:00 app[web.1]:       'content-type': 'application/json; charset=utf-8'
+
+2023-10-19T10:02:49.744081+00:00 app[web.1]:     },
+
+2023-10-19T10:02:49.744081+00:00 app[web.1]:     counter: 0,
+
+2023-10-19T10:02:49.744081+00:00 app[web.1]:     highWaterMark: undefined
+
+2023-10-19T10:02:49.744081+00:00 app[web.1]:   }
+
+2023-10-19T10:02:49.744082+00:00 app[web.1]: }
+
+2023-10-19T10:02:49.744084+00:00 app[web.1]: requestedURL:  http://cons-6a9dc71762e0.herokuapp.com/api/public/checkouts/helge-test.myshopify.com?checkoutToken=cd5721ca0f32938023733dcd13612310
+
+2023-10-19T10:02:49.744085+00:00 app[web.1]: POST /api/public/checkouts/helge-test.myshopify.com?checkoutToken=cd5721ca0f32938023733dcd13612310 200 - - 84.017 ms
+
+2023-10-19T10:02:49.770018+00:00 app[web.1]: start
+
+2023-10-19T10:02:49.783316+00:00 app[web.1]: db Create:  NodeResponse [Response] {
+
+2023-10-19T10:02:49.783318+00:00 app[web.1]:   size: 0,
+
+2023-10-19T10:02:49.783319+00:00 app[web.1]:   [Symbol(Body internals)]: {
+
+2023-10-19T10:02:49.783319+00:00 app[web.1]:     body: ReadableStream {
+
+2023-10-19T10:02:49.783320+00:00 app[web.1]:       _state: 'readable',
+
+2023-10-19T10:02:49.783320+00:00 app[web.1]:       _reader: undefined,
+
+2023-10-19T10:02:49.783320+00:00 app[web.1]:       _storedError: undefined,
+
+2023-10-19T10:02:49.783321+00:00 app[web.1]:       _disturbed: false,
+
+2023-10-19T10:02:49.783321+00:00 app[web.1]:       _readableStreamController: [ReadableStreamDefaultController]
+
+2023-10-19T10:02:49.783322+00:00 app[web.1]:     },
+
+2023-10-19T10:02:49.783322+00:00 app[web.1]:     type: 'text/plain;charset=UTF-8',
+
+2023-10-19T10:02:49.783322+00:00 app[web.1]:     size: 43,
+
+2023-10-19T10:02:49.783323+00:00 app[web.1]:     boundary: null,
+
+2023-10-19T10:02:49.783323+00:00 app[web.1]:     disturbed: false,
+
+2023-10-19T10:02:49.783323+00:00 app[web.1]:     error: null
+
+2023-10-19T10:02:49.783324+00:00 app[web.1]:   },
+
+2023-10-19T10:02:49.783324+00:00 app[web.1]:   [Symbol(Response internals)]: {
+
+2023-10-19T10:02:49.783324+00:00 app[web.1]:     url: undefined,
+
+2023-10-19T10:02:49.783324+00:00 app[web.1]:     status: 200,
+
+2023-10-19T10:02:49.783324+00:00 app[web.1]:     statusText: '',
+
+2023-10-19T10:02:49.783325+00:00 app[web.1]:     headers: {
+
+2023-10-19T10:02:49.783325+00:00 app[web.1]:       'access-control-allow-origin': '*',
+
+2023-10-19T10:02:49.783325+00:00 app[web.1]:       'content-type': 'application/json; charset=utf-8'
+
+2023-10-19T10:02:49.783326+00:00 app[web.1]:     },
+
+2023-10-19T10:02:49.783326+00:00 app[web.1]:     counter: 0,
+
+2023-10-19T10:02:49.783326+00:00 app[web.1]:     highWaterMark: undefined
+
+2023-10-19T10:02:49.783326+00:00 app[web.1]:   }
+
+2023-10-19T10:02:49.783326+00:00 app[web.1]: }
+
+2023-10-19T10:02:49.783327+00:00 app[web.1]: requestedURL:  http://cons-6a9dc71762e0.herokuapp.com/api/public/checkouts/helge-test.myshopify.com?checkoutToken=cd5721ca0f32938023733dcd13612310

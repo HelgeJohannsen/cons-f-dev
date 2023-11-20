@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Config" ADD COLUMN     "minBestellWert" INTEGER NOT NULL DEFAULT 11000;

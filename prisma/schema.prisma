@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ShopifyOrderCreatedUnhandled{
+  orderId              BigInt   @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime  @default(now())
+}
+
+model ShopifyOrderCreatedHandled{
+  orderId              BigInt    @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime
+  handledAt            DateTime  @default(now())
+}
+model ShopifyOrderCancelUnhandled{
+  orderId              BigInt   @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime  @default(now())
+}
+
+model ShopifyOrderCancelHandled{
+  orderId              BigInt    @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime
+  handledAt            DateTime  @default(now())
+}
+model ShopifyOrderFulfillmentUnhandled{
+  orderId              BigInt   @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime  @default(now())
+}
+
+model ShopifyOrderFulfillmentHandled{
+  orderId              BigInt    @id
+  shop                 String 
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime
+  handledAt            DateTime  @default(now())
+}
+model Session {
+  id          String    @id
+  shop        String
+  state       String
+  isOnline    Boolean   @default(false)
+  scope       String?
+  expires     DateTime?
+  accessToken String
+  userId      BigInt?
+}
+
+model Order {
+  id          Int      @id @default(autoincrement())
+  orderId     String  // Could be @id if typed correctly https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  shop        String
+  createdAt   DateTime  @default(now())
+}
+
+model Checkout {
+  uuid            String  @id
+  shop            String
+  transaction_id  String?
+  orderId         BigInt?
+  statusHistory   CheckoutState[]
+  createdAt       DateTime  @default(now())
+}
+
+model CheckoutState{
+  id Int @id @default(autoincrement())
+  checkout      Checkout? @relation(fields: [checkoutId], references: [uuid])
+  checkoutId    String
+  state         String
+  notifyRequest String
+  creditAmount  String?
+  createdAt     DateTime  @default(now())
+}
+
+
+model Config {
+  id              Int      @id @default(autoincrement())
+  username        String   @map("apiUsername")
+  vendorId        String   @map("verndorId")
+  clientId        String
+  laufzeiten      String
+  zeroMonth       String
+  zinsSaetze      String
+  aktionszins     Int 
+  shop            String   @unique
+  hash            String
+  apiKey          String
+  passwort        String
+  paymentHandle   String
+  minBestellWert  Int @default(11000)
+}

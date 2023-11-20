@@ -1,0 +1,14 @@
+
+services:
+  db:
+    container_name: dev_db
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
+    image: mariadb:10
+    ports: 
+     - 3306:3306
+    volumes:
+      - ../dbData:/var/lib/mysql
+    environment:
+      - MARIADB_INITDB_SKIP_TZINFO=true
+        #  - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=oY8io2Shshoo9Eix
