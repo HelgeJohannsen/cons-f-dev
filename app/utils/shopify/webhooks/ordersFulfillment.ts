@@ -10,7 +10,8 @@ import { getConsorsClient } from "~/utils/consors/api";
 const orderCreated = z.object({
   id: z.number(),
   admin_graphql_api_id: z.string(),
-  current_total_price: z.string()
+  current_total_price: z.string(),
+  tags: z.string()
 })
 
 async function getTransactionId(shop:string, admin_graphql_api_id:string) {
@@ -48,7 +49,7 @@ export async function webbhook_ordersFulfillment(shop: string, payload: unknown)
   console.log(data)  // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const orderData = orderCreated.parse(data)
   console.log("parsed oderData", orderData)
-
+  if(orderData.tags.includes('Consors Finanzierung')){
   const createdShopifyOrderCreatedUnhandled = await createShopifyOrderFulfillmentUnhandled(shop, orderData.id, orderData.admin_graphql_api_id, orderData.current_total_price)
   console.log("createdShopifyOrderCreatedUnhandled", createdShopifyOrderCreatedUnhandled)
   // const transactionId = await getTransactionId(shop, orderData.admin_graphql_api_id)
@@ -57,6 +58,7 @@ export async function webbhook_ordersFulfillment(shop: string, payload: unknown)
   // }else{
   //   console.error("no transaction id in metafield for ", orderData.admin_graphql_api_id)
   // }
+  }
 }
 
 interface OrderQueueEntry{

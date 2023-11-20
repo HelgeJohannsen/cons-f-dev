@@ -15,8 +15,12 @@ docker exec -it cons-f-dev_db mysql -u root -p
 use cons-f-dev;
 show * from Config;
 USE e-bike;
-
-
+update Config set paymentHandle = "custom-manual-payment-7bba6950c3614ff181edf8d1fa49d8c0" where id = 1;
+insert into CheckoutState = (  checkout      Checkout? @relation(fields: [checkoutId], references: [uuid])
+  checkoutId    String
+  state         String
+  notifyRequest String
+  creditAmount  String?)
 
 # Shopify App Template - Remix
 

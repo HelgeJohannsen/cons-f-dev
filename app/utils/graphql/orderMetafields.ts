@@ -61,14 +61,16 @@ export async function getTransactionId(shop:string, admin_graphql_api_id:string)
       }
     }`
     const metaFields = await gqlClient.query({data:{query}})
-    const used = (metaFields.body as any)["data"]["order"]["metafield"]["value"]
-    
-    console.log("used from Metafield", used)
-    // TODO: check if metafield is set
-
-    if(used == null){
-      console.error("order has no used Consors object", used)
-      return undefined
+    try {
+      const used = (metaFields.body as any)["data"]["order"]["metafield"]["value"]
+      console.log("used from Metafield", used)
+      // TODO: check if metafield is set
+      if(used == null){
+        console.error("order has no used Consors object", used)
+        return undefined
+      }
+      return used
+    } catch (error) {
+      return false
     }
-    return used
   }
