@@ -120,10 +120,6 @@ function Extension() {
       }
   },[appSettings?.minBestellWert])
 
-
-      console.log("handle:",options[0].handle)
-
-
   const financeOptionSelected = useMemo(
     () => {
       if(options.length == 1 && options[0].type === "manualPayment" && appSettings?.paymentHandle != undefined && options[0].handle == appSettings.paymentHandle){

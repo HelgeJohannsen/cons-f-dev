@@ -57,7 +57,7 @@ export async function action({request, params}: LoaderArgs) {
   }
 
   if(notification.status == "error"){    
-    const error = await createCheckoutState(checkout, notification.status_detail!, "request.url", notification.creditAmount) // TODO; request url zu lang für db
+    const error = await createCheckoutState(checkout, notification.status_detail!, request.url, notification.creditAmount)
     if(notification.status_detail === "CANCELLED"){
       const shopifyGid = "gid://shopify/Order/" + notification.order_id
       addTags(checkout.shop, shopifyGid,"Cancelled")
@@ -66,7 +66,7 @@ export async function action({request, params}: LoaderArgs) {
     
     await checkoutAddTransactionId(checkout.uuid, notification.transaction_id!)
 
-    const created = await createCheckoutState(checkout, notification.status, request.url, notification.creditAmount)
+    const created = await createCheckoutState(checkout, notification.status, "request.url", notification.creditAmount) // TODO; request url zu lang für db
     console.log("created", created)
     console.log(notification)
   }else if(notification.status === "accepted"){
