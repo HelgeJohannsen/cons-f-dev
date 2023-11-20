@@ -34,7 +34,7 @@ var initLegalText;!function(e,n){function t(e,n,t,a,i,s,l,r,o){var d={};this.get
       }
       $(document).ready(
         function(){
-          fetch(`https://cons-6a9dc71762e0.herokuapp.com/api/public/config?shop=${shopName}`) // TODO: error handeling
+          fetch(`https://cons-f-dev.cpro-server.de/api/public/config?shop=${shopName}`) // TODO: error handeling
             .then(response => response.json()).then(handlePromise).catch(reson => {
               console.error("something went wrong", reson)
           })

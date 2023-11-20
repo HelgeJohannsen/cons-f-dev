@@ -57,7 +57,7 @@ export async function action({request, params}: LoaderArgs) {
   }
 
   if(notification.status == "error"){    
-    const error = await createCheckoutState(checkout, notification.status_detail!, request.url, notification.creditAmount)
+    const error = await createCheckoutState(checkout, notification.status_detail!, "request.url", notification.creditAmount) // TODO; request url zu lang für db
     if(notification.status_detail === "CANCELLED"){
       const shopifyGid = "gid://shopify/Order/" + notification.order_id
       addTags(checkout.shop, shopifyGid,"Cancelled")

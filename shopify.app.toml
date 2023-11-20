@@ -1,13 +1,13 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "consors-heroku"
-client_id = "b4144f22c3e138dd73136fb1a4c68422"
-application_url = "https://cons-6a9dc71762e0.herokuapp.com"
+name = "cons-f-dev"
+client_id = "a933d5647dd636d6d33c9ed9bc9f1164"
+application_url = "https://cons-f-dev.cpro-server.de"
 embedded = true
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products,write_orders"
+scopes = "write_products,write_orders,read_orders"
 
 [auth]
 redirect_urls = [
