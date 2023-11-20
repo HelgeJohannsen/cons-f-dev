@@ -50,17 +50,25 @@ async function BackgroundLoop(){
     // TODO: handle Order
     
     await handleOrderCancelQueue(unhandledOrderCancel)
-      .then( () => handleShopifyOrderCancel(unhandledOrderCancel.orderId))
-      .catch( (reson) => console.error("Error handleShopifyOrderCancel:", reson)) //TODO: handle Error using backoff timer
+    .then( (sucess) => {
+      if(sucess){
+        handleShopifyOrderCancel(unhandledOrderCancel.orderId)
+      }
+    }
+    ).catch( (reson) => console.error("Error handleShopifyOrderCancel:", reson)) //TODO: handle Error using backoff timer
   })
   await Promise.all(toHandleCancel)
 
   const unhandledOrderFulfillment = await getShopifyOrderFulfillmentUnhandled()
   const toHandleFulfillment = unhandledOrderFulfillment.map( async unhandledOrderFulfillment => {
-    console.log("unhandledFulfillmentCancel", unhandledOrderFulfillment)
+    console.log("unhandledFulfillment", unhandledOrderFulfillment)
     await handleFulfillmentQueue(unhandledOrderFulfillment)
-      .then( () => removeFromOrderFulfillmentQueue(unhandledOrderFulfillment.orderId))
-      .catch( (reson) => console.error("Error unhandledOrderFulfillment:", reson)) //TODO: handle Error using backoff timer
+    .then( (sucess) => {
+      if(sucess){
+        removeFromOrderFulfillmentQueue(unhandledOrderFulfillment.orderId)
+      }
+    }
+    ).catch( (reson) => console.error("Error unhandledOrderFulfillment:", reson)) //TODO: handle Error using backoff timer
   })
   await Promise.all(toHandleFulfillment)
 
