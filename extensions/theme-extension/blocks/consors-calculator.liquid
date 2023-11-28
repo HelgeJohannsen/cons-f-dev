@@ -1,0 +1,178 @@
+<script defer src="{{ 'calculator.js' | asset_url }}"></script>
+
+<link rel="stylesheet" href="{{ 'calc.css' | asset_url }}">
+
+<!-- init calculator -->
+<script
+  defer
+>
+  var shopName = "{{ shop.name }}" + ".myshopify.com";
+
+  let [minMonth, maxMonth, stepMonth] = [0, 0, 0];
+  let [firstInterestRate, secondInterestRate, thirdInterestRate] = [0, 0, 0];
+
+  const preButtons = document.querySelectorAll('.month');
+  for (const button of preButtons) {
+          if (button.classList.contains('selected')) {
+
+          }
+  }
+
+  function dynamicLegalTextFields () {
+        const buttons = document.querySelectorAll('.month');
+        
+        for (const button of buttons) {
+          if (button.classList.contains('selected')) {
+            switch (parseInt(button.textContent)) {
+              case parseInt(minMonth):
+                document.getElementById('campaignInterestRate').innerText = `${firstInterestRate} %`;
+                document.getElementById('campaignDuration').innerText = minMonth;
+                break;
+
+              case (parseInt(stepMonth) + parseInt(minMonth)):
+                document.getElementById('campaignInterestRate').innerText = `${secondInterestRate} %`;
+                document.getElementById('campaignDuration').innerText = (parseInt(stepMonth) + parseInt(minMonth));
+                break;
+
+              case parseInt(maxMonth):
+                document.getElementById('campaignInterestRate').innerText = `${thirdInterestRate} %`;
+                document.getElementById('campaignDuration').innerText = maxMonth;
+                break;
+
+              default:
+                document.getElementById('campaignInterestRate').innerText = '0,00 %';
+                document.getElementById('campaignDuration').innerText = '0';
+                break;
+            }
+          }
+        }
+  }
+  
+    async function handlePromise(jsonData) {
+      var productPrice = {{ product.price }}/100;
+      const zeroMonth = jsonData.zeroMonth;
+      [minMonth, maxMonth, stepMonth] = jsonData.laufzeiten.split(",");
+      [firstInterestRate, secondInterestRate, thirdInterestRate] = jsonData.zinsSaetze.split(",");
+      
+      jQuery(function($) {
+        var jsontest = {
+          minMonth: Number(minMonth),
+          maxMonth: Number(maxMonth),
+          stepMonth: Number(stepMonth),
+          zeroMonth: Number(zeroMonth),
+          firstInterestRate: Number(firstInterestRate),
+          secondInterestRate: Number(secondInterestRate),
+          thirdInterestRate: Number(thirdInterestRate),
+          productPrice: productPrice
+        };
+        $('#calculator').calculator(jsontest);
+      });
+  }
+
+  $(document).ready(function(){
+    fetch(`https://cons-f-dev.cpro-server.de/api/public/config?shop=${shopName}`)
+      .then(response => response.json())
+      .then(handlePromise)
+      .catch(reason => {
+        console.error("something went wrong", reason);
+      });
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const showSection = document.getElementById('openCalculator');
+    const legalTextSection = document.getElementById('legalTextModalSection');
+    const scrollSentinel = document.getElementById('sentinel');
+    const closeModal = document.getElementById('closeModal');
+
+    showSection.addEventListener('click', function () {
+      if (legalTextSection) {
+        legalTextSection.style.display = legalTextSection.style.display === 'flex' ? 'none' : 'flex';
+      }
+      scrollSentinel.scrollIntoView({ behavior: 'smooth' });
+      dynamicLegalTextFields()
+
+      legalTextSection.addEventListener('click', function () {
+        if (legalTextSection.style.display === 'flex') {
+        dynamicLegalTextFields()
+        }
+      })
+    });
+
+    closeModal.addEventListener('click', function () {
+      legalTextSection.style.display = 'none';
+    });
+  });
+</script>
+
+<div id="legalTextModalSection" class="legal-text-modal-section">
+  <span class="close" id="closeModal">&times;</span>
+  <div class="legal-text-modal-content" id="legalTextModalContent">
+    <div id="calculator"></div>
+    {% if block.settings.legalText != blank %}
+      <div class="dynamicLegalText">{{ block.settings.legalText }}</div>
+    {% else %}
+      <ul class="legal-text" id="dynamicLT">
+        <li class="show-on-more-month">
+          Finanzierung über einen bonitätsabhängigen Ratenkredit. Kaufpreis entspricht dem Nettodarlehensbetrag; Angaben
+          zugleich repräsentatives Beispiel i. S. d. § 17 Abs. 4 PAngV.
+        </li>
+        <li class="legal-1 show-on-less-month" id="sentinel">
+          Finanzierung Ihres Einkaufs (Ratenplan-Verfügung) über den Kreditrahmen mit Mastercard<sup>®</sup>, den Sie
+          wiederholt in Anspruch nehmen können. Nettodarlehensbetrag bonitätsabhängig bis 15.000 &euro;. 17,90 %
+          effektiver Jahreszinssatz. Vertragslaufzeit auf unbestimmte Zeit.
+        </li>
+        <li class="show-on-less-month">
+          <strong>
+            <u>Ratenplan-Verfügung:</u>
+          </strong>
+          Gebundener Sollzinssatz von
+          <span class="campaign-interest-rate" id="campaignInterestRate">0,00 %</span>
+          (jährlich) gilt nur für die ersten
+          <span class="campaign-duration" id="campaignDuration">0</span>
+          Monate ab Vertragsschluss (Zinsbindungsdauer); Sie müssen monatliche Teilzahlungen in der von Ihnen gewählten
+          Höhe leisten. Führen Sie Ihre Ratenplan-Verfügung nicht innerhalb der Zinsbindungsdauer zurück, gelten die
+          Konditionen für Folgeverfügungen.
+        </li>
+        <li class="show-on-less-month">
+          <strong>
+            <u>Folgeverfügungen:</u>
+          </strong>
+          Für andere und künftige Verfügungen (Folgeverfügungen) beträgt der veränderliche Sollzinssatz (jährlich) 16,58
+          % (falls Sie bereits einen Kreditrahmen bei uns haben, kann der tatsächliche veränderliche Sollzinssatz
+          abweichen). Für Folgeverfügungen müssen Sie monatliche Teilzahlungen in der von Ihnen gewählten Höhe, mind.
+          aber 2,5% der jeweils höchsten, auf volle 100 € gerundeten Sollsaldos der Folgeverfügungen (mind. 9 €)
+          leisten. Zahlungen für Folgeverfügungen werden erst auf verzinste Folgeverfügungen angerechnet, bei
+          unterschiedlichen Zinssätzen zuerst auf die höher verzinsten.
+        </li>
+
+        <li class="show-on-less-month">
+          Angaben zugleich repräsentatives Beispiel gem. § 17 Abs. 4 PAngV. Gültig für Kunden ab 18 Jahren mit Wohnsitz
+          in Deutschland, gültigem Personalausweis oder Reisepass (Nicht-EU-Bürger i.V.m. gültigem Aufenthaltstitel),
+          gültiger EC-Karte auf eigenen Namen und Mindestnettoeinkommen von 450 € (ohne Kindergeld). Selbständige:
+          Finanzierung nur für private Zwecke, mind. 24 Monate Selbständigkeit. Ggfs. wird ein aktueller
+          Gehalts-/Einkommensnachweis benötigt. Vermittlung erfolgt ausschließlich für den Kreditgeber BNP Paribas S.A.
+          Niederlassung Deutschland, Rüdesheimer Straße 1, 80686 München. Widerrufsrecht: Der Darlehensnehmer kann seine
+          Vertragserklärung innerhalb von 14 Tagen ohne Angabe von Gründen widerrufen. Zur Wahrung der Widerrufsfrist
+          genügt die rechtzeitige Absendung des Widerrufs, wenn die Erklärung auf einem dauerhaften Datenträger (z.B.
+          Brief, Telefax, E-Mail) erfolgt. Der Widerruf ist zu richten an: BNP Paribas S.A. Niederlassung Deutschland,
+          Wuhanstraße 5, 47051 Duisburg (Fax: 02 03/34 69 54-09; Tel.: 02 03/34 69 54-02; E- Mail:
+          widerruf@consorsfinanz.de).
+        </li>
+      </ul>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Consors-Calculator",
+  "target": "section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "legalText",
+      "label": "legalText"
+    }
+  ]
+}
+{% endschema %}
