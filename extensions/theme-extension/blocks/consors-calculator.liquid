@@ -11,41 +11,28 @@
   let [minMonth, maxMonth, stepMonth] = [0, 0, 0];
   let [firstInterestRate, secondInterestRate, thirdInterestRate] = [0, 0, 0];
 
-  const preButtons = document.querySelectorAll('.month');
-  for (const button of preButtons) {
-          if (button.classList.contains('selected')) {
-
-          }
-  }
-
   function dynamicLegalTextFields () {
-        const buttons = document.querySelectorAll('.month');
-        
-        for (const button of buttons) {
-          if (button.classList.contains('selected')) {
-            switch (parseInt(button.textContent)) {
-              case parseInt(minMonth):
-                document.getElementById('campaignInterestRate').innerText = `${firstInterestRate} %`;
-                document.getElementById('campaignDuration').innerText = minMonth;
-                break;
+    const buttons = document.querySelectorAll('.month');
+    const [parsedMinMonth, parsedMaxMonth] = [parseInt(minMonth), parseInt(maxMonth)]
+    for (const button of buttons) {
+      if (button.classList.contains('selected')) {
+        const selectedNumber = parseInt(button.textContent);
 
-              case (parseInt(stepMonth) + parseInt(minMonth)):
-                document.getElementById('campaignInterestRate').innerText = `${secondInterestRate} %`;
-                document.getElementById('campaignDuration').innerText = (parseInt(stepMonth) + parseInt(minMonth));
-                break;
-
-              case parseInt(maxMonth):
-                document.getElementById('campaignInterestRate').innerText = `${thirdInterestRate} %`;
-                document.getElementById('campaignDuration').innerText = maxMonth;
-                break;
-
-              default:
-                document.getElementById('campaignInterestRate').innerText = '0,00 %';
-                document.getElementById('campaignDuration').innerText = '0';
-                break;
-            }
-          }
+        if(selectedNumber === parsedMinMonth){
+          document.getElementById('campaignInterestRate').innerText = `${firstInterestRate} %`;
+          document.getElementById('campaignDuration').innerText = minMonth;
+          break;
         }
+        if (selectedNumber === parsedMaxMonth){
+          document.getElementById('campaignInterestRate').innerText = `${thirdInterestRate} %`;
+          document.getElementById('campaignDuration').innerText = maxMonth;
+          break;
+        }
+        document.getElementById('campaignInterestRate').innerText = `${secondInterestRate} %`;
+        document.getElementById('campaignDuration').innerText = selectedNumber;
+        break;
+      }
+    }    
   }
   
     async function handlePromise(jsonData) {
