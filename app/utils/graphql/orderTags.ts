@@ -48,6 +48,7 @@ export async function addTags(shop:string, admin_graphql_api_id:string, tag: str
     }
   })
   ).then( response => {
+    // TODO: may need error handeling ?
     console.log("tags query headers: ",response.headers)
     console.log("tags query body: ",response.body)
   })

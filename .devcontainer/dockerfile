@@ -1,0 +1,4 @@
+FROM mcr.microsoft.com/devcontainers/typescript-node:18
+# Installing libvips-dev for sharp Compatibility
+RUN apt update \
+ && apt upgrade -y

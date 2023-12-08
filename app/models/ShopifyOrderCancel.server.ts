@@ -16,16 +16,24 @@ export function getShopifyOrderCancelUnhandled( ){
     return order
 }
     
+export function incrementCounterShopifyOrderCancelUnhandled( orderId: bigint ){
+    return db.shopifyOrderCancelUnhandled.findUnique( {where:{orderId}} ).then(
+        (order)=>{
+            if(order != undefined){
+                return db.shopifyOrderCancelUnhandled.update( {where:{orderId}, data:{counter: order.counter+1}} )
+            }
+        }
+    )
+}
+
 export async function handleShopifyOrderCancel(orderId: bigint){
     const order = await db.shopifyOrderCancelUnhandled.findUnique({where:{orderId}})
     if(order == null){
         return false
     }
 
-    const handledOrder = await db.shopifyOrderCancelHandled.create({
+    await db.shopifyOrderCancelHandled.create({
         data: order
-    })
-    await db.shopifyOrderCancelUnhandled.delete({where:{orderId}})
-
+    }).then(() => db.shopifyOrderCancelUnhandled.delete({where:{orderId}}))
     return true
 }

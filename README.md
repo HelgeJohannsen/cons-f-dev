@@ -1,26 +1,33 @@
 # For development
 
-
 To set the env Var:
 ```bash
-set DATABASE_URL=mysql://root:1WrPZqlCnk4CHbpd31cq@localhost:3306/devDb
+set DATABASE_URL=mysql://root:oY8io2Shshoo9Eix@localhost:3306/bike_db
 ```
+To access db:
+```bash
+docker exec -it multicycle_db mysql -u root -p
+show databases;
+use e-bike;
+ Select * from Config;
+ DELETE FROM ShopifyOrderCreatedUnhandled WHERE orderId=5781596373321;
+
+ UPDATE Config
+SET paymentHandle = 'custom-manual-payment-723f25c1c670169832680fd448b26ad5'
+WHERE id = 2;
+```
+DATABASE_URL=mysql/${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/github_helge
 
 to start up the dev db:
 ```bash
 docker compose -f devDB.compose.yml
 ```
-docker exec -it e-bike_db mysql -u root -p
-docker exec -it cons-f-dev_db mysql -u root -p
-use cons-f-dev;
-show * from Config;
-USE e-bike;
-update Config set paymentHandle = "custom-manual-payment-7bba6950c3614ff181edf8d1fa49d8c0" where id = 1;
-insert into CheckoutState = (  checkout      Checkout? @relation(fields: [checkoutId], references: [uuid])
-  checkoutId    String
-  state         String
-  notifyRequest String
-  creditAmount  String?)
+# RUN npx prisma migrate dev --name init
+
 
 # Shopify App Template - Remix
 

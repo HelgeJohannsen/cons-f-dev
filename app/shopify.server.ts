@@ -40,7 +40,7 @@ async function BackgroundLoop(){
           }
         }
       )
-      .catch( (reson) => console.error("Error handleShopifyOrderCreated:", reson)) //TODO: handle Error using backoff timer
+      .catch( (reason) => console.error("Error handleShopifyOrderCreated:", reason)) //TODO: handle Error using backoff timer
   })
   await Promise.all(toHandle)
 
@@ -55,7 +55,7 @@ async function BackgroundLoop(){
         handleShopifyOrderCancel(unhandledOrderCancel.orderId)
       }
     }
-    ).catch( (reson) => console.error("Error handleShopifyOrderCancel:", reson)) //TODO: handle Error using backoff timer
+    ).catch( (reason) => console.error("Error handleShopifyOrderCancel:", reason)) //TODO: handle Error using backoff timer
   })
   await Promise.all(toHandleCancel)
 
@@ -68,7 +68,7 @@ async function BackgroundLoop(){
         removeFromOrderFulfillmentQueue(unhandledOrderFulfillment.orderId)
       }
     }
-    ).catch( (reson) => console.error("Error unhandledOrderFulfillment:", reson)) //TODO: handle Error using backoff timer
+    ).catch( (reason) => console.error("Error unhandledOrderFulfillment:", reason)) //TODO: handle Error using backoff timer
   })
   await Promise.all(toHandleFulfillment)
 

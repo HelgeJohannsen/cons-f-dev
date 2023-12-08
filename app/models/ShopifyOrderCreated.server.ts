@@ -12,8 +12,19 @@ export function createShopifyOrderCreatedUnhandled(shop: string, orderId: number
 }
 
 export function getShopifyOrderCreatedUnhandled( ){
-    const order = db.shopifyOrderCreatedUnhandled.findMany()
+    const order = db.shopifyOrderCreatedUnhandled.findMany( {where:{counter: {lt: 24}}} )
     return order
+}
+
+
+export function incrementCounterShopifyOrderCreatedUnhandled( orderId: bigint ){
+    return db.shopifyOrderCreatedUnhandled.findUnique( {where:{orderId}} ).then(
+        (order)=>{
+            if(order != undefined){
+                return db.shopifyOrderCreatedUnhandled.update( {where:{orderId}, data:{counter: order.counter+1}} )
+            }
+        }
+    )
 }
     
 export async function removeFromOrderCreatedQueue(orderId: bigint){
@@ -22,10 +33,9 @@ export async function removeFromOrderCreatedQueue(orderId: bigint){
         return false
     }
 
-    const handledOrder = await db.shopifyOrderCreatedHandled.create({
+    await db.shopifyOrderCreatedHandled.create({
         data: order
-    })
-    await db.shopifyOrderCreatedUnhandled.delete({where:{orderId}})
+    }).then(() => db.shopifyOrderCreatedUnhandled.delete({where:{orderId}}))
 
     return true
 }

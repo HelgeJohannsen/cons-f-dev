@@ -1,7 +1,7 @@
 import db from "../db.server";
 
 export async function getOrCreateConfig(shop) {
-
+  // TODO: check typing
   const config = await db.config.findFirst({ where: { shop } });
   console.log("shop", shop)
   if (!config) {
@@ -11,6 +11,16 @@ export async function getOrCreateConfig(shop) {
   return config;
 }
 
+export async function isAppLive(shop){
+  const config = await db.config.findFirst({ where: { shop }, select:{
+    mode: true,
+  }});
+  if (config?.mode == "live"){
+      return true
+  }else{
+    return false
+  }
+}
 export async function getPublicConfig(shop) {
 
   const config = await db.config.findFirst({ where: { shop }, select:{
@@ -37,7 +47,17 @@ export async function getConfigRata(shop) {
     username: true,
     passwort: true,
     vendorId: true,
+    mode: true,
   }});
+  if(config?.mode == "demo"){
+    const data = {
+      username: "1pstest",
+      vendorId: "8403",
+      apiKey: "e93c8c99-34ae-4f96-9a3b-8d761c99f013",
+      passwort: "ecec8403", 
+    };
+    return data
+  }
   console.log("shop", shop)
   return config;
 }

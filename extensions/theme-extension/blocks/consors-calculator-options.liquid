@@ -6,34 +6,32 @@
 <script
   defer
 >
+
   var shopName = "{{ shop.name }}" + ".myshopify.com";
 
   let [minMonth, maxMonth, stepMonth] = [0, 0, 0];
   let [firstInterestRate, secondInterestRate, thirdInterestRate] = [0, 0, 0];
-
+  let displayCalculator = true
+  
   function getMonthlyRateValue (monthlyValue) {
-    const monthlyRateBills = document.getElementById('inlineResultBills');
-    const monthlyRateCoins = document.getElementById('inlineResultCoins');
-
-    const [bills, coins] = monthlyValue.split(",")
-
-    monthlyRateBills.innerText = bills
-    monthlyRateCoins.innerText = coins      
+    const [bills, coins] = monthlyValue.split(",");
+    document.getElementById('inlineResultBills').innerText = bills;
+    document.getElementById('inlineResultCoins').innerText = coins;
   }
 
   function dynamicLegalTextFields () {
+    const withLogoCalculator = document.getElementById('withLogoCalculator');
     const buttons = document.querySelectorAll('.month');
     const [parsedMinMonth, parsedMaxMonth] = [parseInt(minMonth), parseInt(maxMonth)]
-
     const monthlyRate = document.querySelector('.monthly-rate-value');
-    if(monthlyRate){
+    
+    if(monthlyRate && !withLogoCalculator){
       getMonthlyRateValue(monthlyRate.textContent)
     }
 
     for (const button of buttons) {
       if (button.classList.contains('selected')) {
         const selectedNumber = parseInt(button.textContent);
-
         if(selectedNumber === parsedMinMonth){
           document.getElementById('campaignInterestRate').innerText = `${firstInterestRate} %`;
           document.getElementById('campaignDuration').innerText = minMonth;
@@ -54,6 +52,7 @@
   async function handlePromise(jsonData) {
     var productPrice = {{ product.price }}/100;
     const zeroMonth = jsonData.zeroMonth;
+    displayCalculator = productPrice > (jsonData.minBestellWert/100);
     [minMonth, maxMonth, stepMonth] = jsonData.laufzeiten.split(",");
     [firstInterestRate, secondInterestRate, thirdInterestRate] = jsonData.zinsSaetze.split(",");
     
@@ -124,19 +123,25 @@
       inlineCalcOverlay.style.display = "none";
     })
 
-    function setMonthlyRateValue() {
-      const monthlyRate = document.querySelector('.monthly-rate-value');
-      if(monthlyRate){
+    function setCalculatorDisplay() {
+      const withoutLogoCalculator = document.getElementById('withoutLogoCalculator');
+      const withLogoCalculator = document.getElementById('withLogoCalculator');
+      if(displayCalculator && withLogoCalculator){
+        withLogoCalculator.style.display = "flex";
+      }
+      else if(displayCalculator && withoutLogoCalculator){
+        withoutLogoCalculator.style.display = "flex";
+        const monthlyRate = document.querySelector('.monthly-rate-value');
         getMonthlyRateValue(monthlyRate.textContent)
       }
     }
-    setTimeout(setMonthlyRateValue, 500);
+    setTimeout(setCalculatorDisplay, 250);
   });
 </script>
 
 <!-- Calculator without Logo (inline) -->
 {% if block.settings.calcOptions == 'inline' %}
-  <div class="inline-calculator-front-container">
+  <div class="inline-calculator-front-container" id="withoutLogoCalculator">
     <div class="inline-calculator-content">
       <span>Financing from&nbsp;</span>
       <div class="inline-value-container">
@@ -152,7 +157,7 @@
 
 <!-- Calculator with Logo -->
 {% if block.settings.calcOptions == 'withLogo' %}
-  <div class="product--financing">
+  <div class="product--financing" id="withLogoCalculator">
     <img
       class="financing--logo"
       src="{{ 'Consors_Finanz_Logo.png' | asset_url }}"
@@ -161,11 +166,11 @@
       height="45"
       loading="eager"
     >
-    <br>
-    Finanzieren Sie bequem mit Consors Finanz.<br>
-    Weitere Informationen finden sie
-
-    <button class="btn-reset" id="openDrawerBtn">hier</button>
+    <div class="financing--text">
+      Finanzieren Sie bequem mit Consors Finanz.<br>
+      Weitere Informationen finden sie
+      <button class="btn-reset" id="openDrawerBtn">hier</button>
+    </div>
   </div>
 {% endif %}
 

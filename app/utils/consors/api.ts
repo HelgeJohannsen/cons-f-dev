@@ -6,8 +6,8 @@ function parseJwt (token) {
 
 function jwtExpiresAt(jwt:string):number{
   const payload = parseJwt(jwt)
-  payload.exp
-  payload.data.exp  // TODO: is this field needed ? 
+  //payload.exp
+  //payload.data.exp  // TODO: is this field needed ? 
   if(payload.exp != payload.data.exp){
     console.warn("JWT with two different values for .exp and .data.exp", jwt)
   }
@@ -22,7 +22,7 @@ interface ApiAuthData{
   vendorId:string
 }
 
-const jwtMinimalAcceptableLiveTime = 5*60*1000  // 5min
+const jwtMinimalAcceptableLiveTime = 2*60*1000  // 2min
 
 const CONSORS_API_VERSION = "6.5"
   
@@ -57,9 +57,9 @@ private async getNewJWT(): Promise<string>{
 }
 
 async jwt(): Promise<string>{
-  return this.getNewJWT()
+  //return this.getNewJWT()
   // TODO: Token läuft ab
-  if(this.jwtData==undefined || (this.jwtData.jwtValideUntil-jwtMinimalAcceptableLiveTime) > Date.now()){
+  if(this.jwtData==undefined || (this.jwtData.jwtValideUntil-jwtMinimalAcceptableLiveTime) < Date.now()){
     return this.getNewJWT()
       .then((jwt) => {
         this.jwtData = {

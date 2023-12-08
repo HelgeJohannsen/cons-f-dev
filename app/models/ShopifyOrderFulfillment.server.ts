@@ -16,6 +16,17 @@ export function getShopifyOrderFulfillmentUnhandled( ){
     return order
 }
     
+export function incrementCounterShopifyOrderFulfillmentUnhandled( orderId: bigint ){
+    return db.shopifyOrderFulfillmentUnhandled.findUnique( {where:{orderId}} ).then(
+        (order)=>{
+            if(order != undefined){
+                return db.shopifyOrderFulfillmentUnhandled.update( {where:{orderId}, data:{counter: order.counter+1}} )
+            }
+        }
+    )
+}
+   
+
 export async function removeFromOrderFulfillmentQueue(orderId: bigint){
     const order = await db.shopifyOrderFulfillmentUnhandled.findUnique({where:{orderId}})
     if(order == null){

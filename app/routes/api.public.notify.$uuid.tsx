@@ -48,7 +48,14 @@ export async function action({request, params}: LoaderArgs) {
   try{
     const obj = Object.fromEntries(nonEmptySearchParams)
     console.log(obj)
-    notification = consorsNotification.parse(obj)
+    const result = consorsNotification.safeParse(obj)
+    if(result.success){
+      notification = result.data
+    }else{
+      return new Response("not OK", {
+        status: 400
+      });  
+    }
   }catch(error){
     console.error(error)
     return new Response("not OK", {
@@ -66,7 +73,7 @@ export async function action({request, params}: LoaderArgs) {
     
     await checkoutAddTransactionId(checkout.uuid, notification.transaction_id!)
 
-    const created = await createCheckoutState(checkout, notification.status, "request.url", notification.creditAmount) // TODO; request url zu lang für db
+    const created = await createCheckoutState(checkout, notification.status, request.url, notification.creditAmount) // TODO; request url zu lang für db
     console.log("created", created)
     console.log(notification)
   }else if(notification.status === "accepted"){

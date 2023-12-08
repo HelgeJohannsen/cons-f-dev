@@ -29,8 +29,8 @@ export const action = async ({ request }) => {
         return new Response("webhook ORDERS_CREATE", { status: 200 });
 
       case "ORDERS_FULFILLED":   
-      console.log("ORDERS_FULFILLED ",)
-      webbhook_ordersFulfillment(shop, payload)
+        console.log("ORDERS_FULFILLED ",)
+        webbhook_ordersFulfillment(shop, payload)
         return new Response("webhook ORDERS_FULFILLED", { status: 200 }); 
       case "ORDERS_CANCELLED":   
         webbhook_oredersCancel(shop, payload)

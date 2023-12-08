@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+
+    volumes:
+      - ..:/workspaces/dev:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+    
+    environment:
+      - DB_PASSWORD=todo
+      - DB_USER=root
+      - DB_NAME=db
+      - DB_HOST=dev.db
+      - DB_PORT=3306
+
+  db:
+    container_name: dev_cons-f-dev.db
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
+    image: mariadb:10
+    restart: always
+    volumes:
+      - ../../db:/var/lib/mysql
+    environment:
+      - MARIADB_INITDB_SKIP_TZINFO=true
+      - MARIADB_DATABASE=db
+        #  - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=todo

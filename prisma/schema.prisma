@@ -11,7 +11,8 @@ datasource db {
 }
 
 model ShopifyOrderCreatedUnhandled{
-  orderId              BigInt   @id
+  orderId              BigInt    @id
+  counter              Int       @default(0)
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -20,6 +21,7 @@ model ShopifyOrderCreatedUnhandled{
 
 model ShopifyOrderCreatedHandled{
   orderId              BigInt    @id
+  counter              Int
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -28,6 +30,7 @@ model ShopifyOrderCreatedHandled{
 }
 model ShopifyOrderCancelUnhandled{
   orderId              BigInt   @id
+  counter              Int      @default(0)
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -36,6 +39,7 @@ model ShopifyOrderCancelUnhandled{
 
 model ShopifyOrderCancelHandled{
   orderId              BigInt    @id
+  counter              Int
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -44,6 +48,7 @@ model ShopifyOrderCancelHandled{
 }
 model ShopifyOrderFulfillmentUnhandled{
   orderId              BigInt   @id
+  counter              Int      @default(0)
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -52,6 +57,7 @@ model ShopifyOrderFulfillmentUnhandled{
 
 model ShopifyOrderFulfillmentHandled{
   orderId              BigInt    @id
+  counter              Int
   shop                 String 
   admin_graphql_api_id String
   current_total_price  String
@@ -69,6 +75,13 @@ model Session {
   userId      BigInt?
 }
 
+model Order {
+  id          Int      @id @default(autoincrement())
+  orderId     String  // Could be @id if typed correctly https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  shop        String
+  createdAt   DateTime  @default(now())
+}
+
 model Checkout {
   uuid            String  @id
   shop            String
@@ -83,26 +96,33 @@ model CheckoutState{
   checkout      Checkout? @relation(fields: [checkoutId], references: [uuid])
   checkoutId    String
   state         String
-  notifyRequest String
+  notifyRequest String    @db.MediumText
   creditAmount  String?
   createdAt     DateTime  @default(now())
 }
 
 
 model Config {
-  id              Int      @id @default(autoincrement())
-  username        String   @map("apiUsername")
-  vendorId        String   @map("verndorId")
-  clientId        String
-  laufzeiten      String
-  zeroMonth       String
-  zinsSaetze      String
-  aktionszins     Int 
-  shop            String   @unique
-  hash            String
-  apiKey          String
-  passwort        String
-  paymentHandle   String
-//  active          Boolean @default(false)
-  minBestellWert  Int @default(11000)
+  id                Int      @id @default(autoincrement())
+  username          String   @map("apiUsername")
+  vendorId          String   @map("verndorId")
+  clientId          String
+  laufzeiten        String
+  zeroMonth         String
+  zinsSaetze        String
+  aktionszins       Int 
+  aktionsZinsMonate Int      @default(0)
+  shop              String   @unique
+  hash              String
+  apiKey            String
+  passwort          String
+  paymentHandle     String
+  minBestellWert    Int      @default(11000)
+  mode              AppMode  @default(off)
+}
+
+enum AppMode {
+  demo
+  live
+  off
 }

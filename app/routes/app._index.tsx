@@ -1,32 +1,41 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { json } from "@remix-run/node";
-import db from "../db.server";
-import { useLoaderData, Link, useNavigate, useActionData, useSubmit } from "@remix-run/react";
-import { authenticate } from "../shopify.server";
+import {
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+  useSubmit,
+} from "@remix-run/react";
 import {
   Card,
+  ChoiceList,
   EmptyState,
+  HorizontalGrid,
+  HorizontalStack,
+  Icon,
+  IndexTable,
   Layout,
   Page,
-  IndexTable,
-  Thumbnail,
-  Text,
-  Icon,
-  HorizontalStack,
-  Tooltip,
-  TextField,
-  HorizontalGrid,
+  Select,
   Tabs,
+  Text,
+  TextField,
+  Thumbnail,
+  Tooltip,
 } from "@shopify/polaris";
+import db from "../db.server";
+import { authenticate } from "../shopify.server";
 
-import { createConfig, getOrCreateConfig } from "../models/config.server";
 import { DiamondAlertMajor, ImageMajor } from "@shopify/polaris-icons";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { addTags } from "~/utils/graphql/orderTags";
+import { createConfig, getOrCreateConfig } from "../models/config.server";
 
 export async function loader({ request }) {
   const { admin, session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
-  
+
   return Settings;
 }
 
@@ -34,32 +43,51 @@ export async function action({ request, params }) {
   const { session } = await authenticate.admin(request);
   const { shop } = session;
   const body = await request.formData();
-  console.log(" minBestellWert:" + body.get("minBestellWert"))
-  console.log(" id:" + body.get("vendorId"))
+  console.log(" minBestellWert:" + body.get("minBestellWert"));
+  console.log(" id:" + body.get("vendorId"));
   const Config = await db.config.update({
-    where: { shop }, 
-    data:{
-      username: body.get("apiUsername"), 
-      vendorId:   body.get("vendorId"),
-      clientId:    body.get("clientId"),
-      laufzeiten:  body.get("laufzeiten"),
-      zeroMonth:   body.get("zeroMonth"),
-      zinsSaetze:  body.get("zinsSaetze"), 
-      aktionszins: Number(body.get("aktionszins")), 
-      minBestellWert: Number(body.get("minBestellWert")),  
-      shop:shop,
-      hash:        body.get("hash"),
-      apiKey:      body.get("apiKey"),
-      passwort:    body.get("passwort")
-    }
+    where: { shop },
+    data: {
+      username: body.get("apiUsername"),
+      vendorId: body.get("vendorId"),
+      clientId: body.get("clientId"),
+      laufzeiten: body.get("laufzeiten"),
+      zeroMonth: body.get("zeroMonth"),
+      zinsSaetze: body.get("zinsSaetze"),
+      aktionszins: Number(body.get("aktionszins")),
+      aktionsZinsMonate: Number(body.get("aktionsZinsMonate")),
+      minBestellWert: Number(body.get("minBestellWert")),
+      shop: shop,
+      hash: body.get("hash"),
+      apiKey: body.get("apiKey"),
+      passwort: body.get("passwort"),
+      mode: body.get("mode"),
+    },
   });
 
   return Config;
 }
 
-
 export default function Index() {
-  const { id, username,vendorId: vendorId,clientId,laufzeiten,zeroMonth,zinsSaetze, aktionszins, minBestellWert, apiKey, shop, hash, passwort } = useLoaderData();
+  const laoderData = useLoaderData<typeof loader>();
+  const {
+    id,
+    username,
+    vendorId,
+    clientId,
+    laufzeiten,
+    zeroMonth,
+    zinsSaetze,
+    aktionszins,
+    aktionsZinsMonate,
+    minBestellWert,
+    apiKey,
+    shop,
+    hash,
+    passwort,
+    mode,
+  } = laoderData!; // TODO: might be undefined if server not reachable ?
+
   const errors = useActionData()?.errors || {};
   const [apiUsernameTextfield, setapiUsernameTextfield] = useState(username);
   const [vendorIdTextfield, setVendorIdTextfield] = useState(vendorId);
@@ -68,48 +96,71 @@ export default function Index() {
   const [zeroMonthTextfield, setZeroMonthTextfield] = useState(zeroMonth);
   const [zinsSaetzeTextfield, setzinsSaetzeTextfield] = useState(zinsSaetze);
   const [aktionszinsTextfield, setaktionszinsTextfield] = useState(aktionszins);
-  const [minBestellwertTextfield, setminBestellwertTextfield] = useState(minBestellWert);
+  const [aktionsZinsMonateTextfield, setaktionsZinsMonateTextfield] =
+    useState(aktionsZinsMonate);
+  const [minBestellwertTextfield, setminBestellwertTextfield] =
+    useState(minBestellWert);
   const [hashTextfield, sethashTextfield] = useState(hash);
   const [passwortTextfield, setPasswortTextfield] = useState(passwort);
   const [apiKeyTextfield, setApiKeyTextfield] = useState(apiKey);
-  
+  const [modeDropDown, setModeDropDown] = useState(mode);
+
+  const [selected, setSelected] = useState("0");
+
+  const handleSelectChange = useCallback(
+    (value: string) => setSelected(value),
+    []
+  );
 
   const submit = useSubmit();
 
   function handleSave() {
     const data = {
       id: id,
-      apiUsername : apiUsernameTextfield,
+      apiUsername: apiUsernameTextfield,
       vendorId: vendorIdTextfield,
       clientId: clientIdTextfield,
       laufzeiten: laufzeitenTextfield,
       zeroMonth: zeroMonthTextfield,
-      zinsSaetze : zinsSaetzeTextfield,
+      zinsSaetze: zinsSaetzeTextfield,
       aktionszins: aktionszinsTextfield,
       minBestellWert: minBestellwertTextfield,
       shop: shop,
       passwort: passwortTextfield,
       apiKey: apiKeyTextfield,
       hash: hashTextfield,
+      mode: modeDropDown,
     };
 
     submit(data, { method: "post" });
   }
+  useEffect(() => {
+    handleSave();
+  }, [modeDropDown]);
+
+  const aktionszinsTestOptions: Array<{ label: string; value: string }> = [
+    { label: "0", value: "0" },
+    { label: "1", value: "1" },
+    { label: "2", value: "2" },
+    { label: "3", value: "3" },
+  ];
 
   return (
     <Page>
       <ui-title-bar title="Einstellungen"> </ui-title-bar>
       <Tabs tabs={[]} selected={0}></Tabs>
-      <HorizontalGrid gap="4" columns={3} >
-        <Card> 
-          <Text as="h2" variant="headingMd">Consors EFI</Text>
+      <HorizontalGrid gap="4" columns={3}>
+        <Card>
+          <Text as="h2" variant="headingMd">
+            Consors EFI
+          </Text>
           <TextField
             id="title"
             label="API-Username"
             autoComplete="off"
             value={apiUsernameTextfield}
             onChange={(value) => setapiUsernameTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
           <TextField
@@ -118,39 +169,60 @@ export default function Index() {
             autoComplete="off"
             value={vendorIdTextfield}
             onChange={(value) => setVendorIdTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
-          <TextField
-            id="title"
-            label="ClientID"
-            autoComplete="off"
-            value={clientIdTextfield}
-            onChange={(value) => setClientIdTextfield(value)}
-            onBlur={() => handleSave( )}
-            error={errors.title}
+          <ChoiceList
+            title="App Mode"
+            name="appMode"
+            allowMultiple={false}
+            selected={[modeDropDown]}
+            choices={[
+              // {value: "demo", label: "Demo Mode"},
+              { value: "live", label: "Live Betrieb" },
+              { value: "off", label: "Abgeschaltet" },
+            ]}
+            onChange={(value) => {
+              console.log(`onChange event with value: ${value}`);
+              // TODO: can value be of another length then 1 ?
+              if (value.length === 1) {
+                // setModeDropDown(value[0]);
+              }
+            }}
           />
         </Card>
+
         <Card>
-        <Text as="h2" variant="headingMd">Konfigurator</Text>
+          <Text as="h2" variant="headingMd">
+            Konfigurator
+          </Text>
           <Tooltip content="Mindestlaufzeit, Maximallaufzeit und Schritte">
+            <Select
+              id="aktionszinsTest"
+              label="aktionszins Test"
+              requiredIndicator
+              options={aktionszinsTestOptions}
+              onChange={handleSelectChange}
+              value={selected}
+            />
+
             <TextField
               id="laufzeiten"
               label="Laufzeiten"
               autoComplete="off"
               value={laufzeitenTextfield}
               onChange={(value) => setLaufzeitenTextfield(value)}
-              onBlur={() => handleSave( )}
+              onBlur={() => handleSave()}
               error={errors.title}
             />
           </Tooltip>
-          <TextField 
+          <TextField
             id="zeroMonth"
             label="Monate mit Nullprozentfinanzierung"
             autoComplete="off"
             value={zeroMonthTextfield}
             onChange={(value) => setZeroMonthTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
           <TextField
@@ -159,37 +231,48 @@ export default function Index() {
             autoComplete="off"
             value={zinsSaetzeTextfield}
             onChange={(value) => setzinsSaetzeTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
           <TextField
             id="aktionszins"
             label="Aktionszins"
             autoComplete="off"
-            value={aktionszinsTextfield}
-            onChange={(value) => setaktionszinsTextfield(value)}
-            onBlur={() => handleSave( )}
+            value={aktionszinsTextfield.toString()}
+            onChange={(value) => setaktionszinsTextfield(parseInt(value))}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
-           <TextField
+          <TextField
+            id="aktionszins"
+            label="Aktionszins Monate"
+            autoComplete="off"
+            value={aktionsZinsMonateTextfield.toString()}
+            onChange={(value) => setaktionsZinsMonateTextfield(parseInt(value))}
+            onBlur={() => handleSave()}
+            error={errors.title}
+          />
+          <TextField
             id="minBestellwert"
             label="mindestBestellwert"
             autoComplete="off"
-            value={minBestellwertTextfield}
-            onChange={(value) => setminBestellwertTextfield(value)}
-            onBlur={() => handleSave( )}
+            value={minBestellwertTextfield.toString()}
+            onChange={(value) => setminBestellwertTextfield(parseInt(value))}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
         </Card>
         <Card>
-        <Text as="h2" variant="headingMd">Sicherheit</Text>
+          <Text as="h2" variant="headingMd">
+            Sicherheit
+          </Text>
           <TextField
             id="passwort"
             label="Passwort"
             autoComplete="off"
             value={passwortTextfield}
             onChange={(value) => setPasswortTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
           <TextField
@@ -198,7 +281,7 @@ export default function Index() {
             autoComplete="off"
             value={apiKeyTextfield}
             onChange={(value) => setApiKeyTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
           <TextField
@@ -207,7 +290,7 @@ export default function Index() {
             autoComplete="off"
             value={hashTextfield}
             onChange={(value) => sethashTextfield(value)}
-            onBlur={() => handleSave( )}
+            onBlur={() => handleSave()}
             error={errors.title}
           />
         </Card>
