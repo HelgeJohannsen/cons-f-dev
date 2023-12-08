@@ -88,6 +88,8 @@ export default function Index() {
     mode,
   } = laoderData!; // TODO: might be undefined if server not reachable ?
 
+  console.log("laoderData", laoderData);
+
   const errors = useActionData()?.errors || {};
   const [apiUsernameTextfield, setapiUsernameTextfield] = useState(username);
   const [vendorIdTextfield, setVendorIdTextfield] = useState(vendorId);
@@ -108,7 +110,7 @@ export default function Index() {
   const [selected, setSelected] = useState("0");
 
   const handleSelectChange = useCallback(
-    (value: string) => setSelected(value),
+    (value: string) => setaktionszinsTextfield(parseInt(value)),
     []
   );
 
@@ -138,7 +140,7 @@ export default function Index() {
     handleSave();
   }, [modeDropDown]);
 
-  const aktionszinsTestOptions: Array<{ label: string; value: string }> = [
+  const aktionszinsOptions: Array<{ label: string; value: string }> = [
     { label: "0", value: "0" },
     { label: "1", value: "1" },
     { label: "2", value: "2" },
@@ -197,15 +199,6 @@ export default function Index() {
             Konfigurator
           </Text>
           <Tooltip content="Mindestlaufzeit, Maximallaufzeit und Schritte">
-            <Select
-              id="aktionszinsTest"
-              label="aktionszins Test"
-              requiredIndicator
-              options={aktionszinsTestOptions}
-              onChange={handleSelectChange}
-              value={selected}
-            />
-
             <TextField
               id="laufzeiten"
               label="Laufzeiten"
@@ -234,24 +227,28 @@ export default function Index() {
             onBlur={() => handleSave()}
             error={errors.title}
           />
-          <TextField
+          <Select
             id="aktionszins"
             label="Aktionszins"
-            autoComplete="off"
+            options={aktionszinsOptions}
+            onChange={handleSelectChange}
+            onBlur={() => handleSave()}
             value={aktionszinsTextfield.toString()}
-            onChange={(value) => setaktionszinsTextfield(parseInt(value))}
-            onBlur={() => handleSave()}
             error={errors.title}
           />
-          <TextField
-            id="aktionszins"
-            label="Aktionszins Monate"
-            autoComplete="off"
-            value={aktionsZinsMonateTextfield.toString()}
-            onChange={(value) => setaktionsZinsMonateTextfield(parseInt(value))}
-            onBlur={() => handleSave()}
-            error={errors.title}
-          />
+          {selected !== "0" && (
+            <TextField
+              id="aktionszins"
+              label="Aktionszins Monate"
+              autoComplete="off"
+              value={aktionsZinsMonateTextfield.toString()}
+              onChange={(value) =>
+                setaktionsZinsMonateTextfield(parseInt(value))
+              }
+              onBlur={() => handleSave()}
+              error={errors.title}
+            />
+          )}
           <TextField
             id="minBestellwert"
             label="mindestBestellwert"
