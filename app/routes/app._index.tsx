@@ -107,13 +107,6 @@ export default function Index() {
   const [apiKeyTextfield, setApiKeyTextfield] = useState(apiKey);
   const [modeDropDown, setModeDropDown] = useState(mode);
 
-  const [selected, setSelected] = useState("0");
-
-  const handleSelectChange = useCallback(
-    (value: string) => setaktionszinsTextfield(parseInt(value)),
-    []
-  );
-
   const submit = useSubmit();
 
   function handleSave() {
@@ -231,12 +224,12 @@ export default function Index() {
             id="aktionszins"
             label="Aktionszins"
             options={aktionszinsOptions}
-            onChange={handleSelectChange}
+            onChange={(value) => setaktionszinsTextfield(parseInt(value))}
             onBlur={() => handleSave()}
             value={aktionszinsTextfield.toString()}
             error={errors.title}
           />
-          {selected !== "0" && (
+          {aktionszinsTextfield !== 0 && (
             <TextField
               id="aktionszins"
               label="Aktionszins Monate"
