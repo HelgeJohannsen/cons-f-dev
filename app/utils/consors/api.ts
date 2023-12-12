@@ -36,7 +36,7 @@ constructor(public authData: ApiAuthData){
   this.jwtData = undefined
 }
 
-private async getNewJWT(): Promise<string>{
+private async getNewJWT(): Promise<string|undefined>{
   console.log("getting new consors JWT")
   const response = await fetch(
     `https://api.consorsfinanz.de/common-services/cfg/token/${this.authData.vendorId}`, 
@@ -52,21 +52,31 @@ private async getNewJWT(): Promise<string>{
       })
     }
   )
-  console.log("jwt response", response)
-  return response.json().then(body => body["token"].substring("Bearer ".length))
+  if( response.ok ){
+    console.log("jwt response", response)
+    return response.json().then(body => body["token"].substring("Bearer ".length))
+  }else{
+    console.error("jwt not OK response", response)
+    return undefined
+  }
 }
 
-async jwt(): Promise<string>{
+async jwt(): Promise<string|undefined>{
   //return this.getNewJWT()
   // TODO: Token läuft ab
   if(this.jwtData==undefined || (this.jwtData.jwtValideUntil-jwtMinimalAcceptableLiveTime) < Date.now()){
     return this.getNewJWT()
       .then((jwt) => {
-        this.jwtData = {
-          jwt,
-          jwtValideUntil: jwtExpiresAt(jwt)
+        if(jwt === undefined){
+          this.jwtData = undefined
+          return undefined
+        }else{
+          this.jwtData = {
+            jwt,
+            jwtValideUntil: jwtExpiresAt(jwt)
+          }
+          return jwt
         }
-        return jwt
       })   
   }else{
     return this.jwtData.jwt
@@ -137,6 +147,10 @@ async fulfillmentOrder(transactionId:string){
 
 
 const consorsClientCache: { [shop: string]: ConsorsAPI | undefined} = {}
+
+export async function resetConsorsClient(shop:string){
+  consorsClientCache[shop] = undefined
+}
 
 export async function getConsorsClient(shop:string){
   console.log("consorsClientCache",consorsClientCache)

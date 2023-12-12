@@ -9,6 +9,7 @@ import {
 } from "@remix-run/react";
 import {
   Card,
+  Checkbox,
   ChoiceList,
   EmptyState,
   HorizontalGrid,
@@ -28,15 +29,28 @@ import db from "../db.server";
 import { authenticate } from "../shopify.server";
 
 import { DiamondAlertMajor, ImageMajor } from "@shopify/polaris-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { getConsorsClient, resetConsorsClient } from "~/utils/consors/api";
 import { addTags } from "~/utils/graphql/orderTags";
 import { createConfig, getOrCreateConfig } from "../models/config.server";
+
+type AktionszinsOptionsI = {
+  label: string;
+  value: string;
+}[];
 
 export async function loader({ request }) {
   const { admin, session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
 
-  return Settings;
+  const consorsApi = await getConsorsClient(session.shop);
+  const jwt = await consorsApi?.jwt();
+  const consorsDataOk = jwt !== undefined;
+
+  return {
+    ...Settings,
+    consorsDataOk,
+  };
 }
 
 export async function action({ request, params }) {
@@ -65,6 +79,7 @@ export async function action({ request, params }) {
     },
   });
 
+  resetConsorsClient(session.shop);
   return Config;
 }
 
@@ -86,9 +101,8 @@ export default function Index() {
     hash,
     passwort,
     mode,
+    consorsDataOk,
   } = laoderData!; // TODO: might be undefined if server not reachable ?
-
-  console.log("laoderData", laoderData);
 
   const errors = useActionData()?.errors || {};
   const [apiUsernameTextfield, setapiUsernameTextfield] = useState(username);
@@ -97,11 +111,15 @@ export default function Index() {
   const [laufzeitenTextfield, setLaufzeitenTextfield] = useState(laufzeiten);
   const [zeroMonthTextfield, setZeroMonthTextfield] = useState(zeroMonth);
   const [zinsSaetzeTextfield, setzinsSaetzeTextfield] = useState(zinsSaetze);
-  const [aktionszinsTextfield, setaktionszinsTextfield] = useState(aktionszins);
-  const [aktionsZinsMonateTextfield, setaktionsZinsMonateTextfield] =
-    useState(aktionsZinsMonate);
-  const [minBestellwertTextfield, setminBestellwertTextfield] =
-    useState(minBestellWert);
+  const [aktionszinsTextfield, setaktionszinsTextfield] = useState(
+    aktionszins ?? 0
+  );
+  const [aktionsZinsMonateTextfield, setaktionsZinsMonateTextfield] = useState(
+    aktionsZinsMonate ?? 0
+  );
+  const [minBestellwertTextfield, setminBestellwertTextfield] = useState(
+    minBestellWert ?? 11000
+  );
   const [hashTextfield, sethashTextfield] = useState(hash);
   const [passwortTextfield, setPasswortTextfield] = useState(passwort);
   const [apiKeyTextfield, setApiKeyTextfield] = useState(apiKey);
@@ -110,30 +128,33 @@ export default function Index() {
   const submit = useSubmit();
 
   function handleSave() {
-    const data = {
-      id: id,
-      apiUsername: apiUsernameTextfield,
-      vendorId: vendorIdTextfield,
-      clientId: clientIdTextfield,
-      laufzeiten: laufzeitenTextfield,
-      zeroMonth: zeroMonthTextfield,
-      zinsSaetze: zinsSaetzeTextfield,
-      aktionszins: aktionszinsTextfield,
-      minBestellWert: minBestellwertTextfield,
-      shop: shop,
-      passwort: passwortTextfield,
-      apiKey: apiKeyTextfield,
-      hash: hashTextfield,
-      mode: modeDropDown,
-    };
+    if (id === undefined) {
+      console.error("could not load ID from server, cant submit without ID"); // TODO: better handeling
+    } else {
+      const data = {
+        id: id,
+        apiUsername: apiUsernameTextfield ?? null,
+        vendorId: vendorIdTextfield ?? null,
+        clientId: clientIdTextfield ?? null,
+        laufzeiten: laufzeitenTextfield ?? null,
+        zeroMonth: zeroMonthTextfield ?? null,
+        zinsSaetze: zinsSaetzeTextfield ?? null,
+        aktionszins: aktionszinsTextfield ?? null,
+        minBestellWert: minBestellwertTextfield ?? null,
+        shop: shop ?? null,
+        passwort: passwortTextfield ?? null,
+        apiKey: apiKeyTextfield ?? null,
+        hash: hashTextfield ?? null,
+        mode: modeDropDown ?? null,
+      };
 
-    submit(data, { method: "post" });
+      submit(data, { method: "post" });
+    }
   }
   useEffect(() => {
     handleSave();
   }, [modeDropDown]);
-
-  const aktionszinsOptions: Array<{ label: string; value: string }> = [
+  const aktionszinsOptions: AktionszinsOptionsI = [
     { label: "0", value: "0" },
     { label: "1", value: "1" },
     { label: "2", value: "2" },
@@ -181,7 +202,7 @@ export default function Index() {
               console.log(`onChange event with value: ${value}`);
               // TODO: can value be of another length then 1 ?
               if (value.length === 1) {
-                // setModeDropDown(value[0]);
+                setModeDropDown(value[0]);
               }
             }}
           />
@@ -282,6 +303,15 @@ export default function Index() {
             onChange={(value) => sethashTextfield(value)}
             onBlur={() => handleSave()}
             error={errors.title}
+          />
+          <Checkbox
+            label={
+              consorsDataOk
+                ? "Consors Daten sind korrekt"
+                : "Consors Daten sind nicht korrekt"
+            }
+            disabled={true}
+            checked={consorsDataOk}
           />
         </Card>
       </HorizontalGrid>
