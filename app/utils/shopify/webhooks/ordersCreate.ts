@@ -39,7 +39,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
       //console.log("consorsUsed", consorsUsed)
       if (isLive) {
         if (
-          orderData.payment_gateway_names.includes("Bogus") ||
+          orderData.payment_gateway_names.includes("bogus") ||
           orderData.payment_gateway_names.includes("Ratenzahlung") ||
           orderData.payment_gateway_names.includes("Consors Finanzierung") ||
           orderData.payment_gateway_names.includes(
