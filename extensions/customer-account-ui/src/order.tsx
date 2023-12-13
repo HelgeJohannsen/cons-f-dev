@@ -17,7 +17,7 @@ import {
     const cost = useTotalAmount();
     const textAmount = `${cost.amount}`
     const parameters = new URLSearchParams({
-        vendorid: "2578995",
+        vendorid: "8403",
         order_id: order.id.split("Order/")[1],
         order_amount: textAmount,
     })
