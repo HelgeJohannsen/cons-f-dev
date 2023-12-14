@@ -1,7 +1,7 @@
 import db from "../db.server";
 
 export function getOrder(id) {
-  const order = db.order.findFirst({  where: { id: Number(id )} });
+  const order = db.order.findFirst({ where: { id: Number(id) } });
   return order;
 }
 
@@ -9,9 +9,9 @@ export async function createOrder(shop, orderId) {
   /** @type {any} */
   const data = {
     shop,
-    orderId
+    orderId,
   };
-  const order = await db.order.create({data});
+  const order = await db.order.create({ data });
   if (!order) {
     return null;
   }

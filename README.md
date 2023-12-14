@@ -1,10 +1,13 @@
 # For development
 
 To set the env Var:
+
 ```bash
 set DATABASE_URL=mysql://root:oY8io2Shshoo9Eix@localhost:3306/bike_db
 ```
+
 To access db:
+
 ```bash
 docker exec -it multicycle_db mysql -u root -p
 show databases;
@@ -16,18 +19,19 @@ use e-bike;
 SET paymentHandle = 'custom-manual-payment-723f25c1c670169832680fd448b26ad5'
 WHERE id = 2;
 ```
-DATABASE_URL=mysql/${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
+DATABASE_URL=mysql/${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github_helge
 
 to start up the dev db:
+
 ```bash
 docker compose -f devDB.compose.yml
 ```
-# RUN npx prisma migrate dev --name init
 
+# RUN npx prisma migrate dev --name init
 
 # Shopify App Template - Remix
 
@@ -275,8 +279,8 @@ https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?vendorid=840
 ]$ curl -X POST -vvv -k -H "Content-Type: application/x-www-form-urlencoded" -H "x-api-key: ec571f42-0e85-4632-816d-c84935e128da" https://api.consorsfinanz.de/common-services/cfg/token/8403 -X POST -d "username=1pstest&password=ecec8403"
 Note: Unnecessary use of -X or --request, POST is already inferred.
 
-npm run shopify webhook trigger -- --topic orders/create --address https://cons-6a9dc71762e0.herokuapp.com/webhooks 
-npm run shopify webhook trigger -- --topic orders/cancelled --address https://cons-6a9dc71762e0.herokuapp.com/webhooks 
+npm run shopify webhook trigger -- --topic orders/create --address https://cons-6a9dc71762e0.herokuapp.com/webhooks
+npm run shopify webhook trigger -- --topic orders/cancelled --address https://cons-6a9dc71762e0.herokuapp.com/webhooks
 https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?vendorid=8403&order_id=1234test&order_amount=694&email=teso%40googlemail.com&firstname=Johannsen&lastname=Johannsen&notifyURL=https%3A%2F%2Fcons-6a9dc71762e0.herokuapp.com%2Fapi%2Fpublic%2Fnotify%2F941b4fbd39e5aa12566327bdec419075
 
 heroku create -a <my-app-name> -s container

@@ -10,60 +10,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ShopifyOrderCreatedUnhandled{
-  orderId              BigInt    @id
-  counter              Int       @default(0)
-  shop                 String 
-  admin_graphql_api_id String
-  current_total_price  String
-  createdAt            DateTime  @default(now())
-}
-
-model ShopifyOrderCreatedHandled{
-  orderId              BigInt    @id
-  counter              Int
-  shop                 String 
-  admin_graphql_api_id String
-  current_total_price  String
-  createdAt            DateTime
-  handledAt            DateTime  @default(now())
-}
-model ShopifyOrderCancelUnhandled{
+model ShopifyOrderCreatedUnhandled {
   orderId              BigInt   @id
   counter              Int      @default(0)
-  shop                 String 
+  shop                 String
   admin_graphql_api_id String
   current_total_price  String
-  createdAt            DateTime  @default(now())
+  createdAt            DateTime @default(now())
 }
 
-model ShopifyOrderCancelHandled{
-  orderId              BigInt    @id
+model ShopifyOrderCreatedHandled {
+  orderId              BigInt   @id
   counter              Int
-  shop                 String 
+  shop                 String
   admin_graphql_api_id String
   current_total_price  String
   createdAt            DateTime
-  handledAt            DateTime  @default(now())
+  handledAt            DateTime @default(now())
 }
-model ShopifyOrderFulfillmentUnhandled{
+
+model ShopifyOrderCancelUnhandled {
   orderId              BigInt   @id
   counter              Int      @default(0)
-  shop                 String 
+  shop                 String
   admin_graphql_api_id String
   current_total_price  String
-  createdAt            DateTime  @default(now())
+  createdAt            DateTime @default(now())
 }
 
-model ShopifyOrderFulfillmentHandled{
-  orderId              BigInt    @id
+model ShopifyOrderCancelHandled {
+  orderId              BigInt   @id
   counter              Int
-  shop                 String 
+  shop                 String
   admin_graphql_api_id String
   current_total_price  String
   createdAt            DateTime
-  handledAt            DateTime  @default(now())
+  handledAt            DateTime @default(now())
 }
+
+model ShopifyOrderFulfillmentUnhandled {
+  orderId              BigInt   @id
+  counter              Int      @default(0)
+  shop                 String
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime @default(now())
+}
+
+model ShopifyOrderFulfillmentHandled {
+  orderId              BigInt   @id
+  counter              Int
+  shop                 String
+  admin_graphql_api_id String
+  current_total_price  String
+  createdAt            DateTime
+  handledAt            DateTime @default(now())
+}
+
 model Session {
   id          String    @id
   shop        String
@@ -76,23 +79,23 @@ model Session {
 }
 
 model Order {
-  id          Int      @id @default(autoincrement())
-  orderId     String  // Could be @id if typed correctly https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-  shop        String
-  createdAt   DateTime  @default(now())
+  id        Int      @id @default(autoincrement())
+  orderId   String // Could be @id if typed correctly https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  shop      String
+  createdAt DateTime @default(now())
 }
 
 model Checkout {
-  uuid            String  @id
-  shop            String
-  transaction_id  String?
-  orderId         BigInt?
-  statusHistory   CheckoutState[]
-  createdAt       DateTime  @default(now())
+  uuid           String          @id
+  shop           String
+  transaction_id String?
+  orderId        BigInt?
+  statusHistory  CheckoutState[]
+  createdAt      DateTime        @default(now())
 }
 
-model CheckoutState{
-  id Int @id @default(autoincrement())
+model CheckoutState {
+  id            Int       @id @default(autoincrement())
   checkout      Checkout? @relation(fields: [checkoutId], references: [uuid])
   checkoutId    String
   state         String
@@ -101,24 +104,23 @@ model CheckoutState{
   createdAt     DateTime  @default(now())
 }
 
-
 model Config {
-  id                Int      @id @default(autoincrement())
-  username          String   @map("apiUsername")
-  vendorId          String   @map("verndorId")
+  id                Int     @id @default(autoincrement())
+  username          String  @map("apiUsername")
+  vendorId          String  @map("verndorId")
   clientId          String
   laufzeiten        String
   zeroMonth         String
   zinsSaetze        String
-  aktionszins       Int 
-  aktionsZinsMonate Int      @default(0)
-  shop              String   @unique
+  aktionszins       Int
+  aktionsZinsMonate Int     @default(0)
+  shop              String  @unique
   hash              String
   apiKey            String
   passwort          String
   paymentHandle     String
-  minBestellWert    Int      @default(11000)
-  mode              AppMode  @default(off)
+  minBestellWert    Int     @default(11000)
+  mode              AppMode @default(off)
 }
 
 enum AppMode {

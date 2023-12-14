@@ -1,19 +1,19 @@
 {
-    "name": "DevEnv",
-    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "dev",
-    "workspaceFolder": "/workspaces/dev", //${localWorkspaceFolderBasename}",
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "streetsidesoftware.code-spell-checker",
-                "streetsidesoftware.code-spell-checker-german",
-                "ms-vsliveshare.vsliveshare",
-                "prisma.prisma",
-                "eamodio.gitlens",
-                "yoavbls.pretty-ts-errors"
-            ]
-        }
+  "name": "DevEnv",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspaces/dev", //${localWorkspaceFolderBasename}",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-german",
+        "ms-vsliveshare.vsliveshare",
+        "prisma.prisma",
+        "eamodio.gitlens",
+        "yoavbls.pretty-ts-errors"
+      ]
     }
+  }
 }

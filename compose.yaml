@@ -1,9 +1,8 @@
-
 services:
   web:
-    container_name: cons-f-dev   # TODO: chang me for new instance
+    container_name: cons-f-dev # TODO: chang me for new instance
     build: .
-#    image: "traefik/whoami"
+    #    image: "traefik/whoami"
     environment:
       SHOPIFY_APP_URL: "https://cons-f-dev.cpro-server.de"
       HOST: "0.0.0.0"
@@ -16,25 +15,25 @@ services:
       - traefik.http.routers.cons-f-dev.rule=Host(`cons-f-dev.cpro-server.de`) # TODO: change me for new instance
       - traefik.http.routers.cons-f-dev.entrypoints=websecure
       - traefik.http.routers.cons-f-dev.tls.certresolver=letsencrypt
- #   - traefik.http.services.ebike.loadbalancer.server.port=3000
+    #   - traefik.http.services.ebike.loadbalancer.server.port=3000
     restart: unless-stopped
     networks:
       - web
       - intern
-# might be needed, but seems to work without
-#    dns:
-#      - 8.8.8.8
+  # might be needed, but seems to work without
+  #    dns:
+  #      - 8.8.8.8
   db:
     container_name: cons-f-dev_db # TODO: change me for new instance
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
     image: mariadb:10
     restart: unless-stopped
     volumes:
-      - ../databaseData/cons-f-dev:/var/lib/mysql  # TODO: change me for new instnaces
+      - ../databaseData/cons-f-dev:/var/lib/mysql # TODO: change me for new instnaces
     environment:
       - MARIADB_INITDB_SKIP_TZINFO=true
         #  - TZ=Europe/Berlin
-      - MYSQL_ROOT_PASSWORD=1WrPZqlCnk4CHbpd31cq  # TODO: you may change me
+      - MYSQL_ROOT_PASSWORD=1WrPZqlCnk4CHbpd31cq # TODO: you may change me
     networks:
       - intern
 

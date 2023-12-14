@@ -1,5 +1,5 @@
 import "@shopify/shopify-app-remix/adapters/node";
-import {shopifyApi} from '@shopify/shopify-api';
+import { shopifyApi } from "@shopify/shopify-api";
 
 import {
   AppDistribution,
@@ -11,11 +11,20 @@ import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prism
 import { restResources } from "@shopify/shopify-api/rest/admin/2023-07";
 
 import prisma from "./db.server";
-import { getShopifyOrderCreatedUnhandled, removeFromOrderCreatedQueue } from "./models/ShopifyOrderCreated.server";
+import {
+  getShopifyOrderCreatedUnhandled,
+  removeFromOrderCreatedQueue,
+} from "./models/ShopifyOrderCreated.server";
 import { handleOrderQueue } from "./utils/shopify/webhooks/ordersCreate";
-import { getShopifyOrderCancelUnhandled, handleShopifyOrderCancel } from "./models/ShopifyOrderCancel.server";
+import {
+  getShopifyOrderCancelUnhandled,
+  handleShopifyOrderCancel,
+} from "./models/ShopifyOrderCancel.server";
 import { handleOrderCancelQueue } from "./utils/shopify/webhooks/ordersCancel";
-import { getShopifyOrderFulfillmentUnhandled, removeFromOrderFulfillmentQueue } from "./models/ShopifyOrderFulfillment.server";
+import {
+  getShopifyOrderFulfillmentUnhandled,
+  removeFromOrderFulfillmentQueue,
+} from "./models/ShopifyOrderFulfillment.server";
 import { handleFulfillmentQueue } from "./utils/shopify/webhooks/ordersFulfillment";
 /*
 const api = shopifyApi({
@@ -27,61 +36,69 @@ const api = shopifyApi({
   isEmbeddedApp: true,
 })
 */
-async function BackgroundLoop(){
-  console.log("Background Loop")
-  const unhandledOrder = await getShopifyOrderCreatedUnhandled()
-  const toHandle = unhandledOrder.map( async unhandledOrder => {
-    console.log("unhandledOrder", unhandledOrder)
+async function BackgroundLoop() {
+  console.log("Background Loop");
+  const unhandledOrder = await getShopifyOrderCreatedUnhandled();
+  const toHandle = unhandledOrder.map(async (unhandledOrder) => {
+    console.log("unhandledOrder", unhandledOrder);
     // TODO: handle Order
     await handleOrderQueue(unhandledOrder)
-      .then( (sucess) => {
-          if(sucess){
-            removeFromOrderCreatedQueue(unhandledOrder.orderId)
-          }
+      .then((sucess) => {
+        if (sucess) {
+          removeFromOrderCreatedQueue(unhandledOrder.orderId);
         }
-      )
-      .catch( (reason) => console.error("Error handleShopifyOrderCreated:", reason)) //TODO: handle Error using backoff timer
-  })
-  await Promise.all(toHandle)
+      })
+      .catch((reason) =>
+        console.error("Error handleShopifyOrderCreated:", reason)
+      ); //TODO: handle Error using backoff timer
+  });
+  await Promise.all(toHandle);
 
-  const unhandledOrderCancel = await getShopifyOrderCancelUnhandled()
-  const toHandleCancel = unhandledOrderCancel.map( async unhandledOrderCancel => {
-    console.log("unhandledOrderCancel", unhandledOrderCancel)
-    // TODO: handle Order
-    
-    await handleOrderCancelQueue(unhandledOrderCancel)
-    .then( (sucess) => {
-      if(sucess){
-        handleShopifyOrderCancel(unhandledOrderCancel.orderId)
-      }
+  const unhandledOrderCancel = await getShopifyOrderCancelUnhandled();
+  const toHandleCancel = unhandledOrderCancel.map(
+    async (unhandledOrderCancel) => {
+      console.log("unhandledOrderCancel", unhandledOrderCancel);
+      // TODO: handle Order
+
+      await handleOrderCancelQueue(unhandledOrderCancel)
+        .then((sucess) => {
+          if (sucess) {
+            handleShopifyOrderCancel(unhandledOrderCancel.orderId);
+          }
+        })
+        .catch((reason) =>
+          console.error("Error handleShopifyOrderCancel:", reason)
+        ); //TODO: handle Error using backoff timer
     }
-    ).catch( (reason) => console.error("Error handleShopifyOrderCancel:", reason)) //TODO: handle Error using backoff timer
-  })
-  await Promise.all(toHandleCancel)
+  );
+  await Promise.all(toHandleCancel);
 
-  const unhandledOrderFulfillment = await getShopifyOrderFulfillmentUnhandled()
-  const toHandleFulfillment = unhandledOrderFulfillment.map( async unhandledOrderFulfillment => {
-    console.log("unhandledFulfillment", unhandledOrderFulfillment)
-    await handleFulfillmentQueue(unhandledOrderFulfillment)
-    .then( (sucess) => {
-      if(sucess){
-        removeFromOrderFulfillmentQueue(unhandledOrderFulfillment.orderId)
-      }
+  const unhandledOrderFulfillment = await getShopifyOrderFulfillmentUnhandled();
+  const toHandleFulfillment = unhandledOrderFulfillment.map(
+    async (unhandledOrderFulfillment) => {
+      console.log("unhandledFulfillment", unhandledOrderFulfillment);
+      await handleFulfillmentQueue(unhandledOrderFulfillment)
+        .then((sucess) => {
+          if (sucess) {
+            removeFromOrderFulfillmentQueue(unhandledOrderFulfillment.orderId);
+          }
+        })
+        .catch((reason) =>
+          console.error("Error unhandledOrderFulfillment:", reason)
+        ); //TODO: handle Error using backoff timer
     }
-    ).catch( (reason) => console.error("Error unhandledOrderFulfillment:", reason)) //TODO: handle Error using backoff timer
-  })
-  await Promise.all(toHandleFulfillment)
+  );
+  await Promise.all(toHandleFulfillment);
 
-  setTimeout(() => BackgroundLoop(), 30e3)
+  setTimeout(() => BackgroundLoop(), 30e3);
 }
 
-
-
-BackgroundLoop()
+BackgroundLoop();
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
-  apiSecretKey: process.env.SHOPIFY_API_SECRET || "fe93e07b0e2bf2a7fe45cbacd0d3a907",
+  apiSecretKey:
+    process.env.SHOPIFY_API_SECRET || "fe93e07b0e2bf2a7fe45cbacd0d3a907",
   apiVersion: LATEST_API_VERSION,
   scopes: process.env.SCOPES?.split(","),
   appUrl: process.env.SHOPIFY_APP_URL || "",
@@ -97,17 +114,17 @@ const shopify = shopifyApp({
     ORDERS_CREATE: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON, 
+      format: JSON,
     },
     ORDERS_FULFILLED: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON, 
+      format: JSON,
     },
     ORDERS_CANCELLED: {
       deliveryMethod: DeliveryMethod.Http,
       callbackUrl: "/webhooks",
-      format: JSON, 
+      format: JSON,
     },
   },
   hooks: {
