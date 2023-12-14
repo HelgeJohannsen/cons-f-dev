@@ -20,8 +20,8 @@ import {
   useSelectedPaymentOptions,
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
+import type { InterceptorRequest } from "@shopify/ui-extensions/checkout";
 import {
-  InterceptorRequest,
   Metafield,
   MetafieldChangeResult,
   Money,
@@ -78,6 +78,7 @@ function Extension() {
 
   const mail = useEmail();
   const options = useSelectedPaymentOptions();
+  console.log("payment options", options);
 
   const createNewConsorsNotifyUUID = useCreateNewConsorsNotifyUUID();
 

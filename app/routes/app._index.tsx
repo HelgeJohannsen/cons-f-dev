@@ -85,6 +85,7 @@ export async function action({ request, params }) {
 
 export default function Index() {
   const laoderData = useLoaderData<typeof loader>();
+  console.log("INDEX ROUTE");
   const {
     id,
     username,
