@@ -1,24 +1,8 @@
 import {
-  Banner,
-  Link,
-  Text,
-  useApi,
-  reactExtension,
-  useEmail,
-  useShippingAddress,
-  useSelectedPaymentOptions,
-  TextField,
-  useExtensionCapability,
-  useBuyerJourneyIntercept,
   useApplyMetafieldsChange,
   useMetafield,
-  useCheckoutToken,
 } from "@shopify/ui-extensions-react/checkout";
-import {
-  Money,
-  Metafield,
-  MetafieldChangeResult,
-} from "@shopify/ui-extensions/checkout";
+import type { MetafieldChangeResult } from "@shopify/ui-extensions/checkout";
 import { useCallback, useEffect, useState } from "react";
 
 type AllowedNamespaces = "consors";

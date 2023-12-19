@@ -10,36 +10,40 @@ export function backendUrl() {
 
 export function useAppFetchJson() {
   const { shop } = useApi();
+  console.log("useAppFetchJson renders");
 
   // TODO: maybe use some sort of autentication
-  return useCallback(
-    (
-      path: string,
-      parameters: URLSearchParams,
-      method: "GET" | "POST" = "GET"
-    ) => {
-      const targetUrl = `${backendUrl()}${path}?` + parameters;
-      console.log("fetching", targetUrl);
-      return fetch(targetUrl, { method }) // TODO: error handeling
-        .then(async (response) => {
-          const text = await response.text();
-          console.log(targetUrl, "yielded", text);
-          return JSON.parse(text);
-        })
-        .catch((reson) => {
-          console.error("something went wrong :)", reson);
-        });
-    },
-    [shop.myshopifyDomain]
-  );
+
+  return async (
+    path: string,
+    parameters: URLSearchParams,
+    method: "GET" | "POST" = "GET"
+  ) => {
+    const targetUrl = `${backendUrl()}${path}?` + parameters;
+    console.log("fetching", targetUrl);
+
+    try {
+      const response = await fetch(targetUrl, { method });
+      console.log("response useAppFetchJson", response);
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error! Status: ${response.status}`);
+      }
+      const dataInText = await response.text();
+      console.log(targetUrl, "yielded", dataInText);
+      return JSON.parse(dataInText);
+    } catch (error) {
+      console.error("Something went wrong", error);
+    }
+  };
 }
 
 export function useCreateNewConsorsNotifyUUID() {
   const { shop } = useApi();
+  console.log("useCreateNewConsorsNotifyUUID renders");
 
   const appFetchJson = useAppFetchJson();
   const checkoutToken = useCheckoutToken();
-  // TODO: Error handling
   return useCallback(
     () =>
       appFetchJson(
@@ -51,10 +55,10 @@ export function useCreateNewConsorsNotifyUUID() {
           console.log("new UUID Response:", jsonReponse);
           return jsonReponse.uuid;
         })
-        .catch((reson) => {
-          console.error("could not load or create checkout:)", reson);
+        .catch((reason) => {
+          console.error("could not load or create checkout", reason);
         }),
-    [shop.myshopifyDomain, checkoutToken]
+    [shop.myshopifyDomain, checkoutToken, appFetchJson]
   );
 }
 
@@ -74,6 +78,7 @@ export interface AppConfig {
 
 export function useAppConfig() {
   const { shop } = useApi();
+  console.log("useAppConfig renders");
 
   const appFetchJson = useAppFetchJson();
 
@@ -97,7 +102,7 @@ export function useAppConfig() {
         console.log("error getting config", reason);
       }
     }
-  }, [shop.myshopifyDomain]);
+  }, [shop.myshopifyDomain, appFetchJson, shopDomain]);
 
   return config as AppConfig | undefined;
 }

@@ -10,4 +10,8 @@ module.exports = {
   globals: {
     shopify: "readonly",
   },
+  rules: {
+    "@typescript-eslint/no-unused-vars": "off",
+    "react-hooks/rules-of-hooks": "off"
+  }
 };

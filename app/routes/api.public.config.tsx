@@ -1,9 +1,10 @@
-import { authenticate } from "../shopify.server";
-import db from "../db.server";
-import { json, redirect } from "@remix-run/node";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useSubmit } from "@remix-run/react";
 import { Button } from "@shopify/polaris";
+import db from "../db.server";
+import { authenticate } from "../shopify.server";
 
 import { getPublicConfig } from "../models/config.server";
 
