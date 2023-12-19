@@ -1,6 +1,7 @@
-import { Money } from "@shopify/ui-extensions/checkout";
+import type { Money } from "@shopify/ui-extensions/checkout";
 import { useMemo } from "react";
-import { AppConfig, consorsNotifyUrl } from "./useAppFetchJson";
+import type { AppConfig } from "./useAppFetchJson";
+import { consorsNotifyUrl } from "./useAppFetchJson";
 
 export function useConsorsLink(
   appSettings: AppConfig | undefined,
@@ -29,13 +30,21 @@ export function useConsorsLink(
       email: mail,
       firstname: name,
       lastname: lastName,
-      //   returntocheckoutURL: returntocheckoutURL,
+      returntocheckoutURL: returntocheckoutURL,
       failureURL: returntocheckoutURL,
       cancelURL: returntocheckoutURL,
       notifyURL: notifyUrl,
     });
     return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
-  }, [appSettings, totalAmount, mail, name, lastName, consorsUUID]);
+  }, [
+    appSettings,
+    totalAmount,
+    mail,
+    name,
+    lastName,
+    consorsUUID,
+    returntocheckoutURL,
+  ]);
 
   return consorsLink;
 }
