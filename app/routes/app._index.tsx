@@ -141,6 +141,7 @@ export default function Index() {
         zeroMonth: zeroMonthTextfield ?? null,
         zinsSaetze: zinsSaetzeTextfield ?? null,
         aktionszins: aktionszinsTextfield ?? null,
+        aktionsZinsMonate: aktionsZinsMonateTextfield ?? null,
         minBestellWert: minBestellwertTextfield ?? null,
         shop: shop ?? null,
         passwort: passwortTextfield ?? null,
