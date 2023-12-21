@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Banner,
   BlockLayout,
@@ -7,32 +6,40 @@ import {
   InlineLayout,
   Link,
   Text,
+  TextField,
   View,
   reactExtension,
   useApi,
+  useApplyMetafieldsChange,
   useBuyerJourneyIntercept,
   useCheckoutToken,
   useEmail,
+  useExtensionCapability,
+  useMetafield,
   useSelectedPaymentOptions,
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
 import type { InterceptorRequest } from "@shopify/ui-extensions/checkout";
-
+import {
+  Metafield,
+  MetafieldChangeResult,
+  Money,
+} from "@shopify/ui-extensions/checkout";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
+  AppConfig,
   backendUrl,
+  consorsNotifyUrl,
   useAppConfig,
+  useAppFetchJson,
   useCreateNewConsorsNotifyUUID,
 } from "./hooks/useAppFetchJson";
 
 import { useConsorsLink } from "./hooks/useConsorsLink";
+
 import { useFetching } from "./hooks/useFetching";
 import { useStringMetafield } from "./hooks/useStringMetafield";
-import {
-  checkPaymentMethodSelected,
-  checkProductTypeAktionszinsTag,
-} from "./utils/helpers";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -50,27 +57,16 @@ function buyerJourneyBlock(
 }
 
 function Extension() {
-  const { shop, cost, lines } = useApi();
+  const { shop, cost } = useApi();
   const appSettings = useAppConfig();
-  console.log("appSettings", appSettings);
-
-  const paymentOptions = useSelectedPaymentOptions();
-
-  const isEligibleForAkitionzins = checkProductTypeAktionszinsTag(
-    lines.current
-  );
-  const consorsLink = useMemo(
-    () => useConsorsLink(isEligibleForAkitionzins, appSettings),
-    [isEligibleForAkitionzins, appSettings]
-  );
-  console.log("isEligibleForAkitionzins", isEligibleForAkitionzins);
   const totalAmount = cost.totalAmount.current;
+
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
   const returntocheckoutURL = `https://${shop.myshopifyDomain}/checkout`;
 
-  console.log("lines", lines);
-
-  const { countryCode, name, lastName } = useShippingAddress()!;
+  const [uuid, setUuid] = useState("");
+  const [notifyUrl, setNotifyUrl] = useState<string | undefined>(undefined);
+  const { countryCode, name, lastName, address1 } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
   // NOTE: Consors für Österreich nutzt einen anderen server (https://finanzieren.bnpparibas-pf.at/)
   //        siehe: https://marketingportal.consorsfinanz.de/finanzierung-in-oesterreich/eFinancing/inhalte#44c678a2
@@ -78,24 +74,15 @@ function Extension() {
   //               Punkt 3.3 seite 15
 
   const mail = useEmail();
-
-  // CF = Consors Finanzieren
-  const isCFPaymentSelected = useMemo(
-    () =>
-      checkPaymentMethodSelected({
-        appSettings,
-        paymentOptions: paymentOptions,
-      }),
-    [appSettings, paymentOptions]
-  );
+  const options = useSelectedPaymentOptions();
+  console.log("payment options", options);
 
   const createNewConsorsNotifyUUID = useCreateNewConsorsNotifyUUID();
-  const consorsUUID = useCheckoutToken();
 
-  // const [consorsUUID, setConsorsUUID] = useStringMetafield(
-  //   "consors",
-  //   "consorsUUID"
-  // );
+  const [consorsUUID, setConsorsUUID] = useStringMetafield(
+    "consors",
+    "consorsUUID"
+  );
   const [consorsStateMetafield, setConsorsStateMetafield] = useStringMetafield(
     "consors",
     "state"
@@ -112,10 +99,7 @@ function Extension() {
       : `${backendUrl()}/api/public/getstate/${consorsUUID}`
   );
 
-  console.log("fetchState", fetchState);
-
   useEffect(() => {
-    console.log("first useEffect");
     if (
       fetchState.data["state"] != undefined &&
       fetchState.data["state"] != "unknown" &&
@@ -126,13 +110,7 @@ function Extension() {
       setConsorsState(fetchState.data["state"]);
       setCreditAmount(fetchState.data["creditAmount"]);
     }
-  }, [
-    fetchState,
-    consorsStateMetafield,
-    consorsState,
-    creditAmount,
-    setConsorsStateMetafield,
-  ]);
+  }, [fetchState, consorsStateMetafield]);
 
   const startConsorsProcess = useCallback(() => {
     if (consorsStateMetafield == undefined) {
@@ -143,7 +121,6 @@ function Extension() {
   const [minBestellWert, setMinBestellWert] = useState(100);
 
   useEffect(() => {
-    console.log("second useEffect");
     if (appSettings?.minBestellWert != undefined) {
       setMinBestellWert(appSettings.minBestellWert);
     }
@@ -158,35 +135,47 @@ function Extension() {
     }
   }, [appSettings?.minBestellWert]);
 
-  const [uuidRequested, setUuidRequested] = useState(false); // so we only request one uuid
+  const financeOptionSelected = useMemo(() => {
+    if (
+      options.length == 1 &&
+      options[0].type === "manualPayment" &&
+      appSettings?.paymentHandle != undefined &&
+      options[0].handle == appSettings.paymentHandle
+    ) {
+      return true;
+    } else {
+      console.log("handle:", options[0].handle);
+      return false;
+    }
+  }, [options, options[0]?.handle, appSettings, appSettings?.paymentHandle]);
+
+  const [uuidRequested, setUuidRequested] = useState(false); // so we onely request one uuid
 
   useEffect(() => {
-    console.log("third useEffect");
-    if (isCFPaymentSelected && !uuidRequested) {
+    if (consorsUUID === undefined && financeOptionSelected && !uuidRequested) {
       setRequestUuid(true);
     }
-  }, [isCFPaymentSelected, uuidRequested]);
+  }, [consorsUUID, financeOptionSelected, uuidRequested]);
 
-  const [requestUuid, setRequestUuid] = useState(false); // so we only request one uuid
+  const [requestUuid, setRequestUuid] = useState(false); // so we onely request one uuid
   useEffect(() => {
-    console.log("forth useEffect");
     if (requestUuid && !uuidRequested) {
       setUuidRequested(true);
-      // createNewConsorsNotifyUUID().then((uuid) => {
-      //   return setConsorsUUID(uuid);
-      // });
+      createNewConsorsNotifyUUID().then((uuid) => {
+        return setConsorsUUID(uuid);
+      });
     }
   }, [requestUuid]);
 
-  // const consorsLink = useConsorsLink(
-  //   appSettings,
-  //   totalAmount,
-  //   mail,
-  //   name,
-  //   lastName,
-  //   consorsUUID,
-  //   returntocheckoutURL
-  // );
+  const consorsLink = useConsorsLink(
+    appSettings,
+    totalAmount,
+    mail,
+    name,
+    lastName,
+    consorsUUID,
+    returntocheckoutURL
+  );
 
   //  const ssel = useConsorsSSE(consorsUUID, setConsorsState)
 
@@ -197,9 +186,10 @@ function Extension() {
     [creditAmount, totalAmount?.amount]
   );
 
+  console.log();
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     // Validate that the age of the buyer is known, and that they're old enough to complete the purchase
-    if (canBlockProgress && isCFPaymentSelected) {
+    if (canBlockProgress && financeOptionSelected) {
       if (creditAmountMissmatch) {
         return buyerJourneyBlock(
           "consors process missmatch",
@@ -230,25 +220,19 @@ function Extension() {
       behavior: "allow",
     };
   });
+  if (appSettings?.paymentHandle == "") {
+    console.log("handle:", options[0].handle);
+  }
+  if (!financeOptionSelected) {
+    // There are no manual payment Options
+    //setConsorsUsed("false");
+    return <></>;
+  } else {
+    // setConsorsUsed("true");
+  }
   // TODO: ggf. bleibt consorsLink undefined ?
-
-  console.log("creditAmountMissmatch: ", creditAmountMissmatch);
-
-  const isButtonDisabled = useMemo(() => {
-    const isDisabled =
-      !currencyIsSupported ||
-      !countryIsSupported ||
-      !mindestBestellwertErreicht ||
-      consorsLink == undefined;
-    return isDisabled;
-  }, [
-    currencyIsSupported,
-    countryIsSupported,
-    mindestBestellwertErreicht,
-    consorsLink,
-  ]);
-
-  return isCFPaymentSelected ? (
+  //console.log("creditAmountMissmatch: ", creditAmountMissmatch)
+  return (
     <BlockLayout rows={[60, "fill"]} spacing={"none"}>
       {consorsState != "proposal" ? (
         <InlineLayout
@@ -259,9 +243,14 @@ function Extension() {
         >
           <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
           <Button
+            disabled={
+              !currencyIsSupported ||
+              !countryIsSupported ||
+              !mindestBestellwertErreicht ||
+              consorsLink == undefined
+            }
             onPress={startConsorsProcess}
             to={consorsLink}
-            disabled={isButtonDisabled}
           >
             Jetzt Finanzieren mit Consors Finanz
           </Button>
@@ -322,11 +311,5 @@ function Extension() {
         </Banner>
       </View>
     </BlockLayout>
-  ) : (
-    <></>
   );
 }
-
-/*
- [ ] - check if checkout should use akitionzins or not 0% interested rate if yes, add the akitionzins and akitionzins monate to the link to Consors
-*/
