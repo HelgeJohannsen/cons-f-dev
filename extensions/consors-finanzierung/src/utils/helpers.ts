@@ -1,5 +1,5 @@
 import type { CartLine, PaymentOption } from "@shopify/ui-extensions/checkout";
-import type { AppConfig } from "../hooks/useAppFetchJson";
+import type { AppConfig } from "../types";
 
 interface CheckPaymentMethodSelected {
   paymentOptions: PaymentOption[];
@@ -11,7 +11,7 @@ const checkPaymentMethodSelected = ({
   appSettings,
 }: CheckPaymentMethodSelected): boolean => {
   if (appSettings?.paymentHandle == "") {
-    console.log("paymentOptions", paymentOptions);
+    // console.log("paymentOptions", paymentOptions);
   }
   if (
     paymentOptions.length == 1 &&
@@ -21,7 +21,7 @@ const checkPaymentMethodSelected = ({
   ) {
     return true;
   } else {
-    console.log("handle:", paymentOptions[0].handle);
+    // console.log("handle checkPaymentMethodSelected:", paymentOptions[0].handle);
     return false;
   }
 };
@@ -33,4 +33,17 @@ const checkProductTypeAktionszinsTag = (currentLines: CartLine[]): boolean => {
   return allProductsHasTag;
 };
 
-export { checkPaymentMethodSelected, checkProductTypeAktionszinsTag };
+function backendUrl() {
+  return "https://cons-f-dev.cpro-server.de";
+}
+
+function consorsNotifyUrl(uuid: string) {
+  return `${backendUrl()}/api/public/notify/${uuid}`;
+}
+
+export {
+  backendUrl,
+  checkPaymentMethodSelected,
+  checkProductTypeAktionszinsTag,
+  consorsNotifyUrl,
+};

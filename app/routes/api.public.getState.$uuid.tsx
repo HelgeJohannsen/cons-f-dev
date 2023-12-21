@@ -1,9 +1,12 @@
-import type { ActionArgs, LoaderFunction } from "@remix-run/node";
+import type {
+  ActionArgs,
+  HeadersFunction,
+  LoaderFunction,
+} from "@remix-run/node"; // or cloudflare/deno
 import { z } from "zod";
 import { getCheckoutState } from "../models/checkout.server";
 
 import { EventStream } from "remix-sse";
-import type { HeadersFunction } from "@remix-run/node"; // or cloudflare/deno
 
 import { json, redirect } from "@remix-run/node";
 

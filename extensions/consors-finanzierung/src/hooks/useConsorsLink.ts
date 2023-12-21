@@ -4,8 +4,9 @@ import {
   useEmail,
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
-import type { AppConfig } from "./useAppFetchJson";
-import { consorsNotifyUrl } from "./useAppFetchJson";
+
+import type { AppConfig } from "../types";
+import { consorsNotifyUrl } from "../utils/helpers";
 
 export function useConsorsLink(
   isEligibleForAkitionzins: boolean,
@@ -15,6 +16,7 @@ export function useConsorsLink(
     cost: { totalAmount },
     shop: { myshopifyDomain },
   } = useApi();
+  // console.log("useConsorsLink rendered");
   const mail = useEmail();
   const { name, lastName } = useShippingAddress();
   const returntocheckoutURL = `https://${myshopifyDomain}/checkout`;

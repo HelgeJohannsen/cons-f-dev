@@ -26,7 +26,7 @@ export function useStringMetafield<
       return undefined;
     }
     setMetafieldState(metafield?.value);
-    console.log(`got metafield ${namespace}.${key} = ${metafield?.value}`);
+    // console.log(`got metafield ${namespace}.${key} = ${metafield?.value}`);
   }, [namespace, key, metafield?.value]);
 
   const applyMetafieldsChange = useApplyMetafieldsChange();
@@ -37,7 +37,7 @@ export function useStringMetafield<
         return undefined;
       }
       setMetafieldWriteInProgress(true);
-      console.log(`updated ${namespace}.${key} = `, newValue);
+      // console.log(`updated ${namespace}.${key} = `, newValue);
       setMetafieldState(newValue);
       if (newValue !== undefined) {
         return applyMetafieldsChange({

@@ -1,7 +1,7 @@
 import type { Money } from "@shopify/ui-extensions/checkout";
 import { useMemo } from "react";
-import type { AppConfig } from "./useAppFetchJson";
-import { consorsNotifyUrl } from "./useAppFetchJson";
+import type { AppConfig } from "../types";
+import { consorsNotifyUrl } from "../utils/helpers";
 
 export function useConsorsLink2(
   appSettings: AppConfig | undefined,
