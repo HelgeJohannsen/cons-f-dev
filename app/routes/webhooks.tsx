@@ -6,7 +6,7 @@ import { getCheckout } from "../models/checkout.server";
 import { z } from "zod";
 
 import { webbhook_oredersCreate } from "../utils/shopify/webhooks/ordersCreate";
-import { webbhook_oredersCancel } from "~/utils/shopify/webhooks/ordersCancel";
+import { webbhook_oredersCancel as cancelOrderToConsors } from "~/utils/shopify/webhooks/ordersCancel";
 import { webbhook_ordersFulfillment } from "~/utils/shopify/webhooks/ordersFulfillment";
 
 export const action = async ({ request }) => {
@@ -32,8 +32,11 @@ export const action = async ({ request }) => {
         webbhook_ordersFulfillment(shop, payload);
         return new Response("webhook ORDERS_FULFILLED", { status: 200 });
       case "ORDERS_CANCELLED":
-        webbhook_oredersCancel(shop, payload);
+       if(await cancelOrderToConsors(shop, payload)){
         return new Response("webhook ORDERS_CANCELLED", { status: 200 });
+       }
+      
+
       /*     const data2 = payload?.valueOf()
       console.log(data2)  // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
       const order = orderCreated.parse(data2)

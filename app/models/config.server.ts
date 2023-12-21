@@ -30,6 +30,7 @@ export async function getPublicConfig(shop) {
     select: {
       zinsSaetze: true,
       aktionszins: true,
+      aktionsZinsMonate: true,
       laufzeiten: true,
       zeroMonth: true,
       vendorId: true,
