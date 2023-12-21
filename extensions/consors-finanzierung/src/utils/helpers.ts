@@ -1,4 +1,4 @@
-import type { PaymentOption } from "@shopify/ui-extensions/checkout";
+import type { CartLine, PaymentOption } from "@shopify/ui-extensions/checkout";
 import type { AppConfig } from "../hooks/useAppFetchJson";
 
 interface CheckPaymentMethodSelected {
@@ -26,4 +26,11 @@ const checkPaymentMethodSelected = ({
   }
 };
 
-export { checkPaymentMethodSelected };
+const checkProductTypeAktionszinsTag = (currentLines: CartLine[]): boolean => {
+  const allProductsHasTag = currentLines.every(
+    (current) => current.merchandise.product.productType === "aktionszins"
+  );
+  return allProductsHasTag;
+};
+
+export { checkPaymentMethodSelected, checkProductTypeAktionszinsTag };

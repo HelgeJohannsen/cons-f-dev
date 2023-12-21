@@ -11,6 +11,7 @@ import {
   reactExtension,
   useApi,
   useBuyerJourneyIntercept,
+  useCheckoutToken,
   useEmail,
   useSelectedPaymentOptions,
   useShippingAddress,
@@ -26,10 +27,12 @@ import {
 } from "./hooks/useAppFetchJson";
 
 import { useConsorsLink } from "./hooks/useConsorsLink";
-
 import { useFetching } from "./hooks/useFetching";
 import { useStringMetafield } from "./hooks/useStringMetafield";
-import { checkPaymentMethodSelected } from "./utils/helpers";
+import {
+  checkPaymentMethodSelected,
+  checkProductTypeAktionszinsTag,
+} from "./utils/helpers";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -47,13 +50,25 @@ function buyerJourneyBlock(
 }
 
 function Extension() {
-  const { shop, cost } = useApi();
+  const { shop, cost, lines } = useApi();
   const appSettings = useAppConfig();
+  console.log("appSettings", appSettings);
+
   const paymentOptions = useSelectedPaymentOptions();
 
+  const isEligibleForAkitionzins = checkProductTypeAktionszinsTag(
+    lines.current
+  );
+  const consorsLink = useMemo(
+    () => useConsorsLink(isEligibleForAkitionzins, appSettings),
+    [isEligibleForAkitionzins, appSettings]
+  );
+  console.log("isEligibleForAkitionzins", isEligibleForAkitionzins);
   const totalAmount = cost.totalAmount.current;
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
   const returntocheckoutURL = `https://${shop.myshopifyDomain}/checkout`;
+
+  console.log("lines", lines);
 
   const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
@@ -75,11 +90,12 @@ function Extension() {
   );
 
   const createNewConsorsNotifyUUID = useCreateNewConsorsNotifyUUID();
+  const consorsUUID = useCheckoutToken();
 
-  const [consorsUUID, setConsorsUUID] = useStringMetafield(
-    "consors",
-    "consorsUUID"
-  );
+  // const [consorsUUID, setConsorsUUID] = useStringMetafield(
+  //   "consors",
+  //   "consorsUUID"
+  // );
   const [consorsStateMetafield, setConsorsStateMetafield] = useStringMetafield(
     "consors",
     "state"
@@ -95,6 +111,7 @@ function Extension() {
       ? undefined
       : `${backendUrl()}/api/public/getstate/${consorsUUID}`
   );
+
   console.log("fetchState", fetchState);
 
   useEffect(() => {
@@ -145,31 +162,31 @@ function Extension() {
 
   useEffect(() => {
     console.log("third useEffect");
-    if (consorsUUID === undefined && isCFPaymentSelected && !uuidRequested) {
+    if (isCFPaymentSelected && !uuidRequested) {
       setRequestUuid(true);
     }
-  }, [consorsUUID, isCFPaymentSelected, uuidRequested]);
+  }, [isCFPaymentSelected, uuidRequested]);
 
   const [requestUuid, setRequestUuid] = useState(false); // so we only request one uuid
   useEffect(() => {
     console.log("forth useEffect");
     if (requestUuid && !uuidRequested) {
       setUuidRequested(true);
-      createNewConsorsNotifyUUID().then((uuid) => {
-        return setConsorsUUID(uuid);
-      });
+      // createNewConsorsNotifyUUID().then((uuid) => {
+      //   return setConsorsUUID(uuid);
+      // });
     }
   }, [requestUuid]);
 
-  const consorsLink = useConsorsLink(
-    appSettings,
-    totalAmount,
-    mail,
-    name,
-    lastName,
-    consorsUUID,
-    returntocheckoutURL
-  );
+  // const consorsLink = useConsorsLink(
+  //   appSettings,
+  //   totalAmount,
+  //   mail,
+  //   name,
+  //   lastName,
+  //   consorsUUID,
+  //   returntocheckoutURL
+  // );
 
   //  const ssel = useConsorsSSE(consorsUUID, setConsorsState)
 
@@ -180,7 +197,6 @@ function Extension() {
     [creditAmount, totalAmount?.amount]
   );
 
-  // console.log();
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     // Validate that the age of the buyer is known, and that they're old enough to complete the purchase
     if (canBlockProgress && isCFPaymentSelected) {
@@ -310,3 +326,7 @@ function Extension() {
     <></>
   );
 }
+
+/*
+ [ ] - check if checkout should use akitionzins or not 0% interested rate if yes, add the akitionzins and akitionzins monate to the link to Consors
+*/
