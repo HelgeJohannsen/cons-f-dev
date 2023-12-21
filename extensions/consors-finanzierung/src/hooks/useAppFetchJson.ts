@@ -74,6 +74,8 @@ export interface AppConfig {
   shop: string;
   paymentHandle: string;
   minBestellWert: number;
+  aktionszins: number;
+  aktionsZinsMonate: number;
 }
 
 export function useAppConfig() {
@@ -86,8 +88,9 @@ export function useAppConfig() {
   const [shopDomain, setShopDomain] = useState<string>("");
 
   useEffect(() => {
+    console.log("useAppConfig useEffect renders");
     if (shopDomain != shop.myshopifyDomain) {
-      console.log("config requested");
+      // console.log("config requested");
       setShopDomain(shop.myshopifyDomain);
       const reuestUrl = "/api/public/config";
       const parameters = new URLSearchParams({
@@ -95,7 +98,7 @@ export function useAppConfig() {
       });
       try {
         appFetchJson(reuestUrl, parameters).then((c: AppConfig) => {
-          console.log("config received");
+          // // console.log("config received");
           setConfig(c);
         });
       } catch (reason) {
