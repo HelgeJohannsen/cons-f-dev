@@ -1,50 +1,53 @@
-import type { Money } from "@shopify/ui-extensions/checkout";
-import { useMemo } from "react";
+import {
+  useApi,
+  useCheckoutToken,
+  useEmail,
+  useShippingAddress,
+} from "@shopify/ui-extensions-react/checkout";
 import type { AppConfig } from "./useAppFetchJson";
 import { consorsNotifyUrl } from "./useAppFetchJson";
 
 export function useConsorsLink(
-  appSettings: AppConfig | undefined,
-  totalAmount: Money,
-  mail: string,
-  name: string,
-  lastName: string,
-  consorsUUID: string | undefined,
-  returntocheckoutURL: string
-) {
-  const consorsLink: string | undefined = useMemo(() => {
-    if (appSettings == undefined || consorsUUID == undefined) {
-      return undefined; // APP settings not yet loaded, vendor id is unknown, link is
-    }
+  isEligibleForAkitionzins: boolean,
+  appSettings: AppConfig
+): string {
+  const {
+    cost: { totalAmount },
+    shop: { myshopifyDomain },
+  } = useApi();
+  const mail = useEmail();
+  const { name, lastName } = useShippingAddress();
+  const returntocheckoutURL = `https://${myshopifyDomain}/checkout`;
+  const checkoutToken = useCheckoutToken();
+  const notifyUrl = consorsNotifyUrl(checkoutToken);
 
-    const notifyUrl = consorsNotifyUrl(consorsUUID); // Zum Testen andere URL als die Backendurl
-    //const notifyUrl = `https://cons-6a9dc71762e0.herokuapp.com/api/public/notify/${consorsUUID.value}`
-    console.log("notifyUrl", notifyUrl);
-    // TODO: notify URL für den link nutzen
+  if (appSettings == undefined) {
+    return undefined; // APP settings not yet loaded
+  }
 
-    const textAmount = `${totalAmount.amount}`.replace(".", ",");
+  const defaultUrlParams = {
+    vendorid: appSettings.vendorId,
+    order_amount: `${totalAmount.current.amount}`.replace(".", ","),
+    email: mail,
+    firstname: name,
+    lastname: lastName,
+    returntocheckoutURL: returntocheckoutURL,
+    failureURL: returntocheckoutURL,
+    cancelURL: returntocheckoutURL,
+    notifyURL: notifyUrl,
+  };
 
-    const parameters = new URLSearchParams({
-      vendorid: appSettings.vendorId,
-      order_amount: textAmount,
-      email: mail,
-      firstname: name,
-      lastname: lastName,
-      returntocheckoutURL: returntocheckoutURL,
-      failureURL: returntocheckoutURL,
-      cancelURL: returntocheckoutURL,
-      notifyURL: notifyUrl,
-    });
-    return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
-  }, [
-    appSettings,
-    totalAmount,
-    mail,
-    name,
-    lastName,
-    consorsUUID,
-    returntocheckoutURL,
-  ]);
+  const parameters = isEligibleForAkitionzins
+    ? new URLSearchParams({
+        ...defaultUrlParams,
+        aktionszins: appSettings.aktionszins.toString(),
+        aktionsZinsMonate: appSettings.aktionsZinsMonate.toString(),
+      })
+    : new URLSearchParams({
+        ...defaultUrlParams,
+      });
 
-  return consorsLink;
+  const consorsUrl = `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
+
+  return consorsUrl;
 }
