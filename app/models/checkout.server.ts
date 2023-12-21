@@ -12,7 +12,7 @@ export function getCheckoutByOrderId(orderId: bigint) {
   return db.checkout.findFirst({ where: { orderId } });
 }
 export function setOrderId(uuid: string, orderId: number) {
-  console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
+  // console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
   return db.checkout.update({ where: { uuid }, data: { orderId } });
 }
 export function getCheckoutState(
@@ -57,7 +57,7 @@ export async function getOrCreateCheckout(shop: string, checkoutToken: string) {
 export async function checkoutDebug() {
   const all = await db.checkout.findMany();
   all.forEach((checkout) => {
-    console.log(checkout);
+    // console.log(checkout);
   });
 }
 

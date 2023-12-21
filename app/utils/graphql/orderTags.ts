@@ -10,7 +10,7 @@ export async function getOrderTags(shop: string, admin_graphql_api_id: string) {
   const metaFields = await gqlClient.query({ data: { query } });
   const tags = (metaFields.body as any)["data"]["order"]["tags"];
 
-  console.log("tags from order", tags);
+  // console.log("tags from order", tags);
   // TODO: check if metafield is set
 
   if (tags == null) {
@@ -25,9 +25,9 @@ export async function addTags(
   tag: string
 ) {
   const oldTags = await getOrderTags(shop, admin_graphql_api_id);
-  console.log("oldTags", oldTags);
+  // console.log("oldTags", oldTags);
   const newTagArray = oldTags.concat([tag]);
-  console.log("newArray", newTagArray);
+  // console.log("newArray", newTagArray);
   await getGraphqlClient(shop)
     .then((client) =>
       client.query({
@@ -56,7 +56,7 @@ export async function addTags(
     )
     .then((response) => {
       // TODO: may need error handeling ?
-      console.log("tags query headers: ", response.headers);
-      console.log("tags query body: ", response.body);
+      // console.log("tags query headers: ", response.headers);
+      // console.log("tags query body: ", response.body);
     });
 }

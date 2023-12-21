@@ -13,7 +13,7 @@ export async function orderMarkAsPaid(
     notification.transaction_id!
   );
   if (checkout == undefined) {
-    console.log("no checkout found");
+    // console.log("no checkout found");
   } else {
     const created = await createCheckoutState(
       checkout,
@@ -21,8 +21,8 @@ export async function orderMarkAsPaid(
       request.url,
       notification.creditAmount
     );
-    console.log("created new checkout state", created);
-    console.log("Checkout Shop is;", checkout.shop);
+    // console.log("created new checkout state", created);
+    // console.log("Checkout Shop is;", checkout.shop);
     const mut = await getGraphqlClient(checkout.shop)
       .then((client) =>
         client.query({
@@ -48,11 +48,11 @@ export async function orderMarkAsPaid(
       )
       .then((response) => {
         /*       console.log("order paid mutation headers: ",response.headers) */
-        console.log("order paid mutation body: ", response.body);
+        // console.log("order paid mutation body: ", response.body);
         return response;
       });
 
     const uuid = (mut.body as any)["data"]["orderMarkAsPaid"]["userErrors"][0];
-    console.log(`mut: `, uuid);
+    // console.log(`mut: `, uuid);
   }
 }

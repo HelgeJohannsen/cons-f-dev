@@ -3,7 +3,7 @@ import db from "../db.server";
 export async function getOrCreateConfig(shop) {
   // TODO: check typing
   const config = await db.config.findFirst({ where: { shop } });
-  console.log("shop", shop);
+  // console.log("shop", shop);
   if (!config) {
     const entry = await createConfig(shop);
     return entry;
@@ -38,7 +38,7 @@ export async function getPublicConfig(shop) {
       minBestellWert: true,
     },
   });
-  console.log("shop", shop);
+  // console.log("shop", shop);
   if (!config) {
     const entry = await createConfig(shop);
     return entry;
@@ -65,7 +65,7 @@ export async function getConfigRata(shop) {
     };
     return data;
   }
-  console.log("shop", shop);
+  // console.log("shop", shop);
   return config;
 }
 

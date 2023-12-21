@@ -7,7 +7,7 @@ export async function action({ request, params }: ActionArgs) {
   /**
    * creates a new checkout for the given shop(URL parameter) and returnes the uuid
    */
-  console.log("start");
+  // console.log("start");
   const requestedURL = new URL(request.url);
   const shop = params.shop;
   const checkoutToken = requestedURL.searchParams.get("checkoutToken");
@@ -40,7 +40,7 @@ export async function action({ request, params }: ActionArgs) {
       )
     )
     .catch((reason) => {
-      console.log("Error: ", reason);
+      // console.log("Error: ", reason);
       return new Response("Could not create new Checkout", {
         status: 500,
         headers: {
@@ -50,8 +50,8 @@ export async function action({ request, params }: ActionArgs) {
     });
   // TODO: check if entry creation was successful
 
-  console.log("db Create: ", dbCreate);
-  console.log("requestedURL: ", request.url);
+  // console.log("db Create: ", dbCreate);
+  // console.log("requestedURL: ", request.url);
 
   return dbCreate;
 }

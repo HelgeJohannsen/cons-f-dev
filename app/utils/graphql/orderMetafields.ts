@@ -16,11 +16,11 @@ export async function getTransactionId(
   const metaFields = await gqlClient.query({ data: { query } });
   const uuid = (metaFields.body as any)["data"]["order"]["metafield"]["value"];
 
-  console.log("uuid from Metafield", uuid);
+  // console.log("uuid from Metafield", uuid);
   // TODO: check if metafield is set
 
   const checkout = await getCheckout(uuid);
-  console.log("checkout:", checkout);
+  // console.log("checkout:", checkout);
   if (checkout == null) {
     console.error("no checkout with given uuid in database", uuid);
     return undefined;
@@ -48,7 +48,7 @@ export async function getPaymentState(
   const metaFields = await gqlClient.query({ data: { query } });
   const state = (metaFields.body as any)["data"]["order"]["metafield"]["value"];
 
-  console.log("state from Metafield", state);
+  // console.log("state from Metafield", state);
   // TODO: check if metafield is set
 
   if (state == null) {
@@ -74,7 +74,7 @@ export async function getConsorsused(
     const used = (metaFields.body as any)["data"]["order"]["metafield"][
       "value"
     ];
-    console.log("used from Metafield", used);
+    // console.log("used from Metafield", used);
     // TODO: check if metafield is set
     if (used == null) {
       console.error("order has no used Consors object", used);

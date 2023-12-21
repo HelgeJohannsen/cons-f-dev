@@ -19,7 +19,7 @@ export async function action({ request, params }: LoaderArgs) {
    * Called by consors to signal signal sucess or failure of a finance request
    */
 
-  console.log("notify Request:", request.url);
+  // console.log("notify Request:", request.url);
 
   //TODO: is it necessary to validate request.method ?
 
@@ -38,7 +38,7 @@ export async function action({ request, params }: LoaderArgs) {
 
   if (checkout == null) {
     // notification for a non existing checkout
-    console.log("checkout not found");
+    // console.log("checkout not found");
     throw new Response("Not Found", {
       status: 404,
     });
@@ -47,7 +47,7 @@ export async function action({ request, params }: LoaderArgs) {
   const requestedURL = new URL(request.url);
 
   const searchParams = [...requestedURL.searchParams.entries()];
-  console.log("searchParams:", searchParams);
+  // console.log("searchParams:", searchParams);
 
   const nonEmptySearchParams = searchParams.filter(
     ([_name, value]) => value.length > 0
@@ -55,7 +55,7 @@ export async function action({ request, params }: LoaderArgs) {
   let notification: z.infer<typeof consorsNotification>;
   try {
     const obj = Object.fromEntries(nonEmptySearchParams);
-    console.log(obj);
+    // console.log(obj);
     const result = consorsNotification.safeParse(obj);
     if (result.success) {
       notification = result.data;
@@ -91,8 +91,8 @@ export async function action({ request, params }: LoaderArgs) {
       request.url,
       notification.creditAmount
     ); // TODO; request url zu lang für db
-    console.log("created", created);
-    console.log(notification);
+    // console.log("created", created);
+    // console.log(notification);
   } else if (notification.status === "accepted") {
     console.log(
       "notification.status:accepted, orderid;",
@@ -100,21 +100,21 @@ export async function action({ request, params }: LoaderArgs) {
     );
     orderMarkAsPaid(notification, request);
   } else if (notification.status === "error_declined") {
-    console.log(
-      "notification.status:error_declined, orderid;",
-      notification.order_id
-    );
+    // console.log(
+    //   "notification.status:error_declined, orderid;",
+    //   notification.order_id
+    // );
     const shopifyGid = "gid://shopify/Order/" + notification.order_id;
     addTags(checkout.shop, shopifyGid, "error_declined");
   } else if (notification.status === "error_cancelled") {
-    console.log(
-      "notification.status:error_declined, orderid;",
-      notification.order_id
-    );
+    // console.log(
+    //   "notification.status:error_declined, orderid;",
+    //   notification.order_id
+    // );
     const shopifyGid = "gid://shopify/Order/" + notification.order_id;
     addTags(checkout.shop, shopifyGid, "error_cancelled");
   }
-  console.log(notification.status);
+  // console.log(notification.status);
   return new Response("OK", {
     status: 200,
   });

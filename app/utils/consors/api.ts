@@ -36,7 +36,7 @@ export class ConsorsAPI {
   }
 
   private async getNewJWT(): Promise<string | undefined> {
-    console.log("getting new consors JWT");
+    // console.log("getting new consors JWT");
     const response = await fetch(
       `https://api.consorsfinanz.de/common-services/cfg/token/${this.authData.vendorId}`,
       {
@@ -52,7 +52,7 @@ export class ConsorsAPI {
       }
     );
     if (response.ok) {
-      console.log("jwt response", response);
+      // console.log("jwt response", response);
       return response
         .json()
         .then((body) => body["token"].substring("Bearer ".length));
@@ -113,12 +113,12 @@ export class ConsorsAPI {
   }
   async stornoOrder(transactionId: string) {
     const clientId = this.authData.vendorId;
-    console.log("storno transactionId", transactionId);
-    console.log("storno clientId", clientId);
+    // console.log("storno transactionId", transactionId);
+    // console.log("storno clientId", clientId);
     const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/subscription/${clientId}/${transactionId}/partnerdata?version=${CONSORS_API_VERSION}`;
 
     const consorsAuthToken = await this.jwt();
-    console.log("storno with url", consorsUrl);
+    // console.log("storno with url", consorsUrl);
     const res = await fetch(consorsUrl, {
       method: "DELETE",
       headers: {
@@ -133,12 +133,12 @@ export class ConsorsAPI {
 
   async fulfillmentOrder(transactionId: string) {
     const clientId = this.authData.vendorId;
-    console.log("Fulfillment transactionId", transactionId);
-    console.log("Fulfillment clientId", clientId);
+    // console.log("Fulfillment transactionId", transactionId);
+    // console.log("Fulfillment clientId", clientId);
     const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/deliverystatus/${clientId}/${transactionId}/partnerdata?version=${CONSORS_API_VERSION}`;
 
     const consorsAuthToken = await this.jwt();
-    console.log("Fulfillment with url", consorsUrl);
+    // console.log("Fulfillment with url", consorsUrl);
     const res = await fetch(consorsUrl, {
       method: "PUT",
       headers: {
@@ -159,7 +159,7 @@ export async function resetConsorsClient(shop: string) {
 }
 
 export async function getConsorsClient(shop: string) {
-  console.log("consorsClientCache", consorsClientCache);
+  // console.log("consorsClientCache", consorsClientCache);
   const chachedClient = consorsClientCache[shop];
   const config = await getConfigRata(shop);
 

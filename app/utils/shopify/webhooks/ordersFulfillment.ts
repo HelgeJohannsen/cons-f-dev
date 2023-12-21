@@ -27,7 +27,7 @@ export async function webbhook_ordersFulfillment(
   const result = orderFulfilled.safeParse(data);
   if (result.success) {
     const orderData = result.data;
-    console.log("parsed oderData", orderData);
+    // console.log("parsed oderData", orderData);
     if (orderData.tags.includes("Consors Finanzierung")) {
       const createdShopifyOrderCreatedUnhandled =
         await createShopifyOrderFulfillmentUnhandled(
@@ -36,15 +36,15 @@ export async function webbhook_ordersFulfillment(
           orderData.admin_graphql_api_id,
           orderData.current_total_price
         );
-      console.log(
-        "createdShopifyOrderCreatedUnhandled",
-        createdShopifyOrderCreatedUnhandled
-      );
+      // console.log(
+      //   "createdShopifyOrderCreatedUnhandled",
+      //   createdShopifyOrderCreatedUnhandled
+      // );
     } else {
-      console.log("keine Consors Finanzierung");
+      // console.log("keine Consors Finanzierung");
     }
   } else {
-    console.log("could not parse fullfilment date:", data);
+    // console.log("could not parse fullfilment date:", data);
   }
 }
 
@@ -64,16 +64,16 @@ export async function handleFulfillmentQueue({
   counter,
   createdAt,
 }: OrderQueueEntry) {
-  console.log("handling orderQueue Entry");
+  // console.log("handling orderQueue Entry");
 
-  console.log("handling orderCancelQueue Entry");
+  // console.log("handling orderCancelQueue Entry");
 
   const runAt = new Date(createdAt.getTime());
 
   runAt.setHours(runAt.getHours() + counter);
 
   if (runAt.getTime() > Date.now()) {
-    console.log("skipping orderCancelQueue entry");
+    // console.log("skipping orderCancelQueue entry");
     return false;
   }
 
@@ -84,24 +84,24 @@ export async function handleFulfillmentQueue({
   //const paymentState = await getPaymentState(shop, admin_graphql_api_id)
   const transactionId = checkout?.transaction_id;
   if (transactionId != undefined) {
-    console.log("new checkout transactionId:", transactionId);
+    // console.log("new checkout transactionId:", transactionId);
     const response = await getConsorsClient(shop).then((consorsClient) =>
       consorsClient?.fulfillmentOrder(transactionId)
     );
     if (response === undefined) {
-      console.error(`No consors Client for shop ${shop}`);
+      // console.error(`No consors Client for shop ${shop}`);
       return false;
     } else if (response.status < 200 || response.status >= 300) {
-      console.error(
-        `non 2xx response(${response.status}) from consorsApi.fulfillmentOrder : `,
-        await response.text()
-      );
+      // console.error(
+      //   `non 2xx response(${response.status}) from consorsApi.fulfillmentOrder : `,
+      //   await response.text()
+      // );
       return false;
     } else {
       return true;
     }
   } else {
-    console.error("no transaction id in metafield for ", admin_graphql_api_id);
+    // console.error("no transaction id in metafield for ", admin_graphql_api_id);
     return false;
   }
 }

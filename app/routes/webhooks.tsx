@@ -10,10 +10,10 @@ import { webbhook_oredersCancel } from "~/utils/shopify/webhooks/ordersCancel";
 import { webbhook_ordersFulfillment } from "~/utils/shopify/webhooks/ordersFulfillment";
 
 export const action = async ({ request }) => {
-  await console.log("got a webhook");
+  // await console.log("got a webhook");
   const { topic, shop, session, payload } = await authenticate.webhook(request);
 
-  console.log("authenticated, ", topic, shop);
+  // console.log("authenticated, ", topic, shop);
   try {
     switch (topic) {
       case "APP_UNINSTALLED":
@@ -24,11 +24,11 @@ export const action = async ({ request }) => {
 
       case "ORDERS_CREATE":
         webbhook_oredersCreate(shop, payload);
-        console.log("Bestellung erstellt:", payload);
+        // console.log("Bestellung erstellt:", payload);
         return new Response("webhook ORDERS_CREATE", { status: 200 });
 
       case "ORDERS_FULFILLED":
-        console.log("ORDERS_FULFILLED ");
+        // console.log("ORDERS_FULFILLED ");
         webbhook_ordersFulfillment(shop, payload);
         return new Response("webhook ORDERS_FULFILLED", { status: 200 });
       case "ORDERS_CANCELLED":

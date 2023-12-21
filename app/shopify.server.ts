@@ -37,10 +37,10 @@ const api = shopifyApi({
 })
 */
 async function BackgroundLoop() {
-  console.log("Background Loop");
+  // console.log("Background Loop");
   const unhandledOrder = await getShopifyOrderCreatedUnhandled();
   const toHandle = unhandledOrder.map(async (unhandledOrder) => {
-    console.log("unhandledOrder", unhandledOrder);
+    // console.log("unhandledOrder", unhandledOrder);
     // TODO: handle Order
     await handleOrderQueue(unhandledOrder)
       .then((sucess) => {
@@ -57,7 +57,7 @@ async function BackgroundLoop() {
   const unhandledOrderCancel = await getShopifyOrderCancelUnhandled();
   const toHandleCancel = unhandledOrderCancel.map(
     async (unhandledOrderCancel) => {
-      console.log("unhandledOrderCancel", unhandledOrderCancel);
+      // // console.log("unhandledOrderCancel", unhandledOrderCancel);
       // TODO: handle Order
 
       await handleOrderCancelQueue(unhandledOrderCancel)
@@ -76,7 +76,7 @@ async function BackgroundLoop() {
   const unhandledOrderFulfillment = await getShopifyOrderFulfillmentUnhandled();
   const toHandleFulfillment = unhandledOrderFulfillment.map(
     async (unhandledOrderFulfillment) => {
-      console.log("unhandledFulfillment", unhandledOrderFulfillment);
+      // console.log("unhandledFulfillment", unhandledOrderFulfillment);
       await handleFulfillmentQueue(unhandledOrderFulfillment)
         .then((sucess) => {
           if (sucess) {

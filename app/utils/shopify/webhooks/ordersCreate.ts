@@ -24,29 +24,29 @@ const orderCreated = z.object({
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
-  console.log(data); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
+  // console.log(data); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const parseResult = orderCreated.safeParse(data);
 
   if (parseResult.success) {
     const orderData = parseResult.data;
-    console.log("parsed oderData", orderData);
-    console.log("payment_gateway_names", orderData.payment_gateway_names[0]);
+    // console.log("parsed oderData", orderData);
+    // console.log("payment_gateway_names", orderData.payment_gateway_names[0]);
     const isLive = await isAppLive(shop);
 
     if (orderData.checkout_token == undefined) {
-      console.log("ignoring order, no checkout token", orderData);
+      // console.log("ignoring order, no checkout token", orderData);
     } else {
       //console.log("consorsUsed", consorsUsed)
       if (isLive) {
         if (
-          orderData.payment_gateway_names.includes("bogus") ||
+          orderData.payment_gateway_names.includes("bogus") || //Only for test shop
           orderData.payment_gateway_names.includes("Ratenzahlung") ||
           orderData.payment_gateway_names.includes("Consors Finanzierung") ||
           orderData.payment_gateway_names.includes(
             "Finanzierung by Consors Finanz"
           )
         ) {
-          const tags = await addTags(
+          await addTags(
             shop,
             orderData.admin_graphql_api_id,
             "Consors Finanzierung"
@@ -62,24 +62,26 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.current_total_price
             )
           );
-          console.log(
-            "createdShopifyOrderCreatedUnhandled",
-            createdShopifyOrderCreatedUnhandled
-          );
+
+          // console.log(
+          //   "createdShopifyOrderCreatedUnhandled",
+          //   createdShopifyOrderCreatedUnhandled
+          // );
         } else {
+          // TODO not being using .. getConsorused, now is using payment_gateway_names
           const consorsUsed = await getConsorsused(
             shop,
             orderData.admin_graphql_api_id
           );
-          console.log("Consors Payment not used", consorsUsed);
+          // console.log("Consors Payment not used", consorsUsed);
           return false;
         }
       } else {
-        console.log("Order not handled becauseApp is offline");
+        // console.log("Order not handled becauseApp is offline");
       }
     }
   } else {
-    console.log("could not parse created Data:", data);
+    // console.log("could not parse created Data:", data);
   }
   // const transactionId = await getTransactionId(shop, orderData.admin_graphql_api_id)
   // if(transactionId != undefined){
@@ -106,14 +108,14 @@ export async function handleOrderQueue({
   counter,
   createdAt,
 }: OrderQueueEntry) {
-  console.log("handling orderQueue Entry");
+  // console.log("handling orderQueue Entry");
 
   const runAt = new Date(createdAt.getTime());
 
   runAt.setHours(runAt.getHours() + counter);
 
   if (runAt.getTime() > Date.now()) {
-    console.log("skipping orderQueue entry");
+    // console.log("skipping orderQueue entry");
     return false;
   }
 
@@ -124,25 +126,25 @@ export async function handleOrderQueue({
 
   const transactionId = checkout?.transaction_id;
   if (transactionId != undefined) {
-    console.log("new checkout transactionId:", transactionId);
+    // console.log("new checkout transactionId:", transactionId);
     // TODO: current_total_price === proposal Amount
     const response = await getConsorsClient(shop).then((consorsClient) =>
       consorsClient?.provideOrderId(transactionId, orderId)
     );
     if (response === undefined) {
-      console.error(`No consors Client for shop ${shop}`);
+      // console.error(`No consors Client for shop ${shop}`);
       return false;
     } else if (response.status < 200 || response.status >= 300) {
-      console.error(
-        `non 2xx response(${response.status}) from consorsApi.provideOrderId : `,
-        await response.text()
-      );
+      // console.error(
+      //   `non 2xx response(${response.status}) from consorsApi.provideOrderId : `,
+      //   await response.text()
+      // );
       return false;
     } else {
       return true;
     }
   } else {
-    console.error("no transaction id in metafield for ", admin_graphql_api_id);
+    // console.error("no transaction id in metafield for ", admin_graphql_api_id);
     return false;
   }
 }

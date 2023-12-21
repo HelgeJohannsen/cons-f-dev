@@ -24,12 +24,12 @@ export async function webbhook_oredersCancel(shop: string, payload: unknown) {
 
   if (parseResult.success) {
     const orderData = parseResult.data;
-    console.log("parsed oderData", orderData);
+    // console.log("parsed oderData", orderData);
     if (orderData.tags.includes("Consors Finanzierung")) {
-      console.log(
-        "Cancel order because it is Consors Finanzierung:",
-        orderData
-      );
+      // console.log(
+      //   "Cancel order because it is Consors Finanzierung:",
+      //   orderData
+      // );
       const createdShopifyOrderCancelUnhandled =
         await createShopifyOrderCancelUnhandled(
           shop,
@@ -37,15 +37,15 @@ export async function webbhook_oredersCancel(shop: string, payload: unknown) {
           orderData.admin_graphql_api_id,
           orderData.current_total_price
         );
-      console.log(
-        "createdShopifyOrderCanceldUnhandled",
-        createdShopifyOrderCancelUnhandled
-      );
+      // console.log(
+      //   "createdShopifyOrderCanceldUnhandled",
+      //   createdShopifyOrderCancelUnhandled
+      // );
     } else {
-      console.log("keine Consors Finanzierung");
+      // console.log("keine Consors Finanzierung");
     }
   } else {
-    console.log("could not parse calcel date:", data);
+    // console.log("could not parse calcel date:", data);
   }
 }
 
@@ -65,21 +65,21 @@ export async function handleOrderCancelQueue({
   counter,
   createdAt,
 }: OrderQueueEntry) {
-  console.log("handling orderCancelQueue Entry");
+  // console.log("handling orderCancelQueue Entry");
 
   const runAt = new Date(createdAt.getTime());
 
   runAt.setHours(runAt.getHours() + counter);
 
   if (runAt.getTime() > Date.now()) {
-    console.log("skipping orderCancelQueue entry");
+    // console.log("skipping orderCancelQueue entry");
     return false;
   }
 
   await incrementCounterShopifyOrderCancelUnhandled(orderId);
 
   const oderId = BigInt(admin_graphql_api_id.split("Order/")[1]);
-  console.log("orderId from db", oderId);
+  // console.log("orderId from db", oderId);
   const checkout = await getCheckoutByOrderId(oderId);
   if (checkout == null) {
     console.error("no checkout with given uuid in database", oderId);

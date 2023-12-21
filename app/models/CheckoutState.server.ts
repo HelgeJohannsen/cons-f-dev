@@ -8,6 +8,6 @@ export function getCheckoutState(uuid: string) {
 
 export function createCheckout(shop: string) {
   const uuid = randomUUID();
-  console.log("creating new checkout with uuid", uuid);
+  // console.log("creating new checkout with uuid", uuid);
   return db.checkout.create({ data: { uuid, shop } }); // ({data});
 }

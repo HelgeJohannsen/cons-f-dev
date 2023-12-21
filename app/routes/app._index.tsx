@@ -57,8 +57,8 @@ export async function action({ request, params }) {
   const { session } = await authenticate.admin(request);
   const { shop } = session;
   const body = await request.formData();
-  console.log(" minBestellWert:" + body.get("minBestellWert"));
-  console.log(" id:" + body.get("vendorId"));
+  // console.log(" minBestellWert:" + body.get("minBestellWert"));
+  // console.log(" id:" + body.get("vendorId"));
   const Config = await db.config.update({
     where: { shop },
     data: {
@@ -85,7 +85,6 @@ export async function action({ request, params }) {
 
 export default function Index() {
   const laoderData = useLoaderData<typeof loader>();
-  console.log("INDEX ROUTE");
   const {
     id,
     username,
@@ -200,7 +199,7 @@ export default function Index() {
               { value: "off", label: "Abgeschaltet" },
             ]}
             onChange={(value) => {
-              console.log(`onChange event with value: ${value}`);
+              // console.log(`onChange event with value: ${value}`);
               // TODO: can value be of another length then 1 ?
               if (value.length === 1) {
                 setModeDropDown(value[0]);

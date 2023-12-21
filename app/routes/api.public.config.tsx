@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderArgs) {
   /**
    * Returnes the consors config (vendorId, etc.)
    */
-  console.log("requestedURL: ", request.url);
+  // console.log("requestedURL: ", request.url);
 
   const requestedURL = new URL(request.url);
   const shop = requestedURL.searchParams.get("shop");
@@ -24,7 +24,7 @@ export async function loader({ request }: LoaderArgs) {
       }
     );
   }
-  console.log("shop", shop);
+  // console.log("shop", shop);
   const config = await getPublicConfig(shop);
   if (config == null) {
     throw new Response("shop not found", {
