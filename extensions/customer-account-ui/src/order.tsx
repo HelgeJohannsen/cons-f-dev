@@ -1,9 +1,11 @@
 import {
-  reactExtension,
   Banner,
-  useOrder,
   Button,
+  Image,
+  InlineLayout,
+  reactExtension,
   useApi,
+  useOrder,
   useTotalAmount,
 } from "@shopify/ui-extensions-react/customer-account";
 
@@ -26,8 +28,24 @@ function Extension() {
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
   const link = `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
   if (order) {
-    return <Button to={link}>Jetzt Finanzieren mit Consors Finanz</Button>;
+    return (
+      <InlineLayout
+        columns={["45%", "50%"]}
+        spacing={"base"}
+        blockAlignment={"center"}
+        inlineAlignment={"center"}
+      >
+        <Image source="https://cdn.shopify.com/s/files/1/0758/3137/8199/files/ConsorsFinanzLogo.png?v=1701077799" />
+        <Button to={link}>Jetzt Finanzieren mit Consors Finanz</Button>
+      </InlineLayout>
+    );
   }
 
   return null;
 }
+
+/*
+  [ ] Check the if the payment method is form Consors
+  [ ] Get the vendorId from the backend and use a manual value as a backup
+  [ ] Remember to change the manual vendorID on this file
+*/
