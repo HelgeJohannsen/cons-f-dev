@@ -27,12 +27,9 @@ import {
 } from "@shopify/ui-extensions/checkout";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  useAppConfig,
-  useAppFetchJson,
-  useCreateNewConsorsNotifyUUID,
-} from "./hooks/useAppFetchJson";
+import { useCreateNewConsorsNotifyUUID } from "./hooks/useAppFetchJson";
 
+import { useAppConfig } from "./hooks/useAppConfig";
 import { useFetching } from "./hooks/useFetching";
 import { useStringMetafield } from "./hooks/useStringMetafield";
 import { backendUrl, createConsorsLink } from "./utils/consorsUrls";
@@ -55,18 +52,14 @@ function buyerJourneyBlock(
 
 function Extension() {
   const { shop, cost, lines } = useApi();
-  const appSettings = useAppConfig();
+  const appSettings = useAppConfig(shop.myshopifyDomain);
   const checkoutToken = useCheckoutToken();
   const mail = useEmail();
   const options = useSelectedPaymentOptions();
   const totalAmount = cost.totalAmount.current;
-
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
-  const returntocheckoutURL = `https://${shop.myshopifyDomain}/checkout`;
 
-  const [uuid, setUuid] = useState("");
-  const [notifyUrl, setNotifyUrl] = useState<string | undefined>(undefined);
-  const { countryCode, name, lastName, address1 } = useShippingAddress()!;
+  const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
   // NOTE: Consors für Österreich nutzt einen anderen server (https://finanzieren.bnpparibas-pf.at/)
   //        siehe: https://marketingportal.consorsfinanz.de/finanzierung-in-oesterreich/eFinancing/inhalte#44c678a2
@@ -109,12 +102,6 @@ function Extension() {
       setCreditAmount(fetchState.data["creditAmount"]);
     }
   }, [fetchState, consorsStateMetafield]);
-
-  const startConsorsProcess = useCallback(() => {
-    if (consorsStateMetafield == undefined) {
-      setConsorsStateMetafield("started");
-    }
-  }, []);
 
   const [minBestellWert, setMinBestellWert] = useState(100);
 
@@ -194,8 +181,6 @@ function Extension() {
     ]
   );
 
-  //  const ssel = useConsorsSSE(consorsUUID, setConsorsState)
-
   const creditAmountMissmatch = useMemo(
     () =>
       creditAmount != undefined &&
@@ -236,19 +221,10 @@ function Extension() {
       behavior: "allow",
     };
   });
-  if (appSettings?.paymentHandle == "") {
-    console.log("handle:", options[0].handle);
-  }
-  if (!financeOptionSelected) {
-    // There are no manual payment Options
-    //setConsorsUsed("false");
-    return <></>;
-  } else {
-    // setConsorsUsed("true");
-  }
   // TODO: ggf. bleibt consorsLink undefined ?
   //console.log("creditAmountMissmatch: ", creditAmountMissmatch)
-  return (
+
+  return financeOptionSelected ? (
     <BlockLayout rows={[60, "fill"]} spacing={"none"}>
       {consorsState != "proposal" ? (
         <InlineLayout
@@ -265,7 +241,8 @@ function Extension() {
               !mindestBestellwertErreicht ||
               consorsLink == undefined
             }
-            onPress={startConsorsProcess}
+            // onPress={startConsorsProcess}
+            // onPress={() => {}}
             to={consorsLink}
           >
             Jetzt Finanzieren mit Consors Finanz
@@ -300,7 +277,7 @@ function Extension() {
             <>
               {" "}
               <Link
-                onPress={startConsorsProcess}
+                // onPress={startConsorsProcess}
                 to={consorsLink}
                 external={false}
               >
@@ -327,5 +304,7 @@ function Extension() {
         </Banner>
       </View>
     </BlockLayout>
+  ) : (
+    <></>
   );
 }
