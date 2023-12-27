@@ -1,18 +1,10 @@
 import type { CartLine, PaymentOption } from "@shopify/ui-extensions/checkout";
 import type { AppConfig } from "../types";
 
-interface CheckPaymentMethodSelected {
-  paymentOptions: PaymentOption[];
-  appSettings: AppConfig;
-}
-
-const checkPaymentMethodSelected = ({
-  paymentOptions,
-  appSettings,
-}: CheckPaymentMethodSelected): boolean => {
-  if (appSettings?.paymentHandle == "") {
-    console.log("paymentOptions", paymentOptions);
-  }
+const checkPaymentMethodSelected = (
+  paymentOptions: PaymentOption[],
+  appSettings: AppConfig
+): boolean => {
   if (
     paymentOptions.length == 1 &&
     paymentOptions[0].type === "manualPayment" &&

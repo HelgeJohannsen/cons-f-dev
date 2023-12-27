@@ -9,6 +9,10 @@ function consorsNotifyUrl(checkoutToken: string) {
   return `${backendUrl()}/api/public/notify/${checkoutToken}`;
 }
 
+function returnToCheckoutUrl(shopDomain: string) {
+  return `https://${shopDomain}/checkout`;
+}
+
 function createConsorsLink(
   isEligibleForAkitionzins: boolean,
   appSettings: AppConfig | undefined,
@@ -19,11 +23,11 @@ function createConsorsLink(
   totalAmount: Money,
   myshopifyDomain: string
 ): string | undefined {
-  console.log("createConsorsLink renders");
   if (!appSettings) return undefined;
+  console.log("createConsorsLink renders");
   const { vendorId, aktionszins, aktionsZinsMonate } = appSettings;
   const totalAmountAsString = `${totalAmount.amount}`.replace(".", ",");
-  const returntocheckoutURL = `https://${myshopifyDomain}/checkout`;
+  const returntocheckoutURL = returnToCheckoutUrl(myshopifyDomain);
   const notifyUrl = consorsNotifyUrl(checkoutToken);
 
   const defaultUrlParams = {
@@ -51,4 +55,4 @@ function createConsorsLink(
   return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
 }
 
-export { backendUrl, consorsNotifyUrl, createConsorsLink };
+export { backendUrl, consorsNotifyUrl, createConsorsLink, returnToCheckoutUrl };

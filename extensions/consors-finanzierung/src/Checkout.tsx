@@ -6,34 +6,27 @@ import {
   InlineLayout,
   Link,
   Text,
-  TextField,
   View,
   reactExtension,
   useApi,
-  useApplyMetafieldsChange,
   useBuyerJourneyIntercept,
   useCheckoutToken,
   useEmail,
-  useExtensionCapability,
-  useMetafield,
   useSelectedPaymentOptions,
   useShippingAddress,
 } from "@shopify/ui-extensions-react/checkout";
 import type { InterceptorRequest } from "@shopify/ui-extensions/checkout";
-import {
-  Metafield,
-  MetafieldChangeResult,
-  Money,
-} from "@shopify/ui-extensions/checkout";
-import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useCreateNewConsorsNotifyUUID } from "./hooks/useAppFetchJson";
+import { useEffect, useMemo, useState } from "react";
 
 import { useAppConfig } from "./hooks/useAppConfig";
+import { useCheckoutTokenPersistence } from "./hooks/useCheckoutTokenPersistence";
 import { useFetching } from "./hooks/useFetching";
-import { useStringMetafield } from "./hooks/useStringMetafield";
 import { backendUrl, createConsorsLink } from "./utils/consorsUrls";
-import { checkProductTypeAktionszinsTag } from "./utils/helpers";
+import {
+  checkPaymentMethodSelected,
+  checkProductTypeAktionszinsTag,
+} from "./utils/helpers";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -51,106 +44,27 @@ function buyerJourneyBlock(
 }
 
 function Extension() {
+  const [minBestellWert, setMinBestellWert] = useState(100);
+
   const { shop, cost, lines } = useApi();
   const appSettings = useAppConfig(shop.myshopifyDomain);
   const checkoutToken = useCheckoutToken();
   const mail = useEmail();
-  const options = useSelectedPaymentOptions();
+  const paymentOptions = useSelectedPaymentOptions();
   const totalAmount = cost.totalAmount.current;
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
 
   const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
   // NOTE: Consors für Österreich nutzt einen anderen server (https://finanzieren.bnpparibas-pf.at/)
-  //        siehe: https://marketingportal.consorsfinanz.de/finanzierung-in-oesterreich/eFinancing/inhalte#44c678a2
-  //               Handbuch EFinancing (deutsche Version)
-  //               Punkt 3.3 seite 15
+  // siehe: https://marketingportal.consorsfinanz.de/finanzierung-in-oesterreich/eFinancing/inhalte#44c678a2
+  // Handbuch EFinancing (deutsche Version)
+  // Punkt 3.3 seite 15
 
-  console.log("payment options", options);
-
-  const createNewConsorsNotifyUUID = useCreateNewConsorsNotifyUUID();
-
-  const [consorsUUID, setConsorsUUID] = useStringMetafield(
-    "consors",
-    "consorsUUID"
+  const financeOptionSelected = useMemo(
+    () => checkPaymentMethodSelected(paymentOptions, appSettings),
+    [paymentOptions, appSettings]
   );
-  const [consorsStateMetafield, setConsorsStateMetafield] = useStringMetafield(
-    "consors",
-    "state"
-  );
-  const [consorsState, setConsorsState] = useState<string | undefined>(
-    undefined
-  );
-  const [creditAmount, setCreditAmount] = useState<string | undefined>(
-    undefined
-  );
-  const fetchState = useFetching(
-    consorsUUID === undefined
-      ? undefined
-      : `${backendUrl()}/api/public/getstate/${consorsUUID}`
-  );
-
-  useEffect(() => {
-    if (
-      fetchState.data["state"] != undefined &&
-      fetchState.data["state"] != "unknown" &&
-      (fetchState.data["state"] !== consorsState ||
-        fetchState.data["creditAmount"] !== creditAmount)
-    ) {
-      setConsorsStateMetafield(fetchState.data["state"]);
-      setConsorsState(fetchState.data["state"]);
-      setCreditAmount(fetchState.data["creditAmount"]);
-    }
-  }, [fetchState, consorsStateMetafield]);
-
-  const [minBestellWert, setMinBestellWert] = useState(100);
-
-  useEffect(() => {
-    if (appSettings?.minBestellWert != undefined) {
-      setMinBestellWert(appSettings.minBestellWert);
-    }
-  }, [setMinBestellWert, appSettings?.minBestellWert]);
-
-  // TODO: min anpassen / anzeigen
-  const mindestBestellwertErreicht = useMemo(() => {
-    if (appSettings?.minBestellWert != undefined) {
-      return totalAmount?.amount * 100 > appSettings?.minBestellWert;
-    } else {
-      return true;
-    }
-  }, [appSettings?.minBestellWert]);
-
-  const financeOptionSelected = useMemo(() => {
-    if (
-      options.length == 1 &&
-      options[0].type === "manualPayment" &&
-      appSettings?.paymentHandle != undefined &&
-      options[0].handle == appSettings.paymentHandle
-    ) {
-      return true;
-    } else {
-      console.log("handle:", options[0].handle);
-      return false;
-    }
-  }, [options, options[0]?.handle, appSettings, appSettings?.paymentHandle]);
-
-  const [uuidRequested, setUuidRequested] = useState(false); // so we onely request one uuid
-
-  useEffect(() => {
-    if (consorsUUID === undefined && financeOptionSelected && !uuidRequested) {
-      setRequestUuid(true);
-    }
-  }, [consorsUUID, financeOptionSelected, uuidRequested]);
-
-  const [requestUuid, setRequestUuid] = useState(false); // so we onely request one uuid
-  useEffect(() => {
-    if (requestUuid && !uuidRequested) {
-      setUuidRequested(true);
-      createNewConsorsNotifyUUID().then((uuid) => {
-        return setConsorsUUID(uuid);
-      });
-    }
-  }, [requestUuid]);
 
   const isEligibleForAkitionzins = useMemo(
     () => checkProductTypeAktionszinsTag(lines.current),
@@ -180,6 +94,53 @@ function Extension() {
       shop.myshopifyDomain,
     ]
   );
+
+  const ctHash = useCheckoutTokenPersistence(
+    shop.myshopifyDomain,
+    checkoutToken
+  );
+
+  const [consorsState, setConsorsState] = useState<string | undefined>(
+    undefined
+  );
+  const [creditAmount, setCreditAmount] = useState<string | undefined>(
+    undefined
+  );
+  const fetchState = useFetching(
+    financeOptionSelected && ctHash
+      ? `${backendUrl()}/api/public/getstate/${checkoutToken}`
+      : undefined
+  );
+
+  useEffect(() => {
+    console.log("first useEffect");
+    console.log("fetchState", fetchState);
+
+    if (
+      fetchState.data["state"] != undefined &&
+      fetchState.data["state"] != "unknown" &&
+      (fetchState.data["state"] !== consorsState ||
+        fetchState.data["creditAmount"] !== creditAmount)
+    ) {
+      setConsorsState(fetchState.data["state"]);
+      setCreditAmount(fetchState.data["creditAmount"]);
+    }
+  }, [fetchState]);
+
+  useEffect(() => {
+    if (appSettings?.minBestellWert != undefined) {
+      setMinBestellWert(appSettings.minBestellWert);
+    }
+  }, [setMinBestellWert, appSettings?.minBestellWert]);
+
+  // TODO: min anpassen / anzeigen
+  const mindestBestellwertErreicht = useMemo(() => {
+    if (appSettings?.minBestellWert != undefined) {
+      return totalAmount?.amount * 100 > appSettings?.minBestellWert;
+    } else {
+      return true;
+    }
+  }, [appSettings?.minBestellWert]);
 
   const creditAmountMissmatch = useMemo(
     () =>
@@ -242,7 +203,6 @@ function Extension() {
               consorsLink == undefined
             }
             // onPress={startConsorsProcess}
-            // onPress={() => {}}
             to={consorsLink}
           >
             Jetzt Finanzieren mit Consors Finanz
