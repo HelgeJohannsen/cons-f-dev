@@ -28,18 +28,15 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
-  AppConfig,
-  backendUrl,
-  consorsNotifyUrl,
   useAppConfig,
   useAppFetchJson,
   useCreateNewConsorsNotifyUUID,
 } from "./hooks/useAppFetchJson";
 
-import { useConsorsLink } from "./hooks/useConsorsLink";
-
 import { useFetching } from "./hooks/useFetching";
 import { useStringMetafield } from "./hooks/useStringMetafield";
+import { backendUrl, createConsorsLink } from "./utils/consorsUrls";
+import { checkProductTypeAktionszinsTag } from "./utils/helpers";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -57,8 +54,11 @@ function buyerJourneyBlock(
 }
 
 function Extension() {
-  const { shop, cost } = useApi();
+  const { shop, cost, lines } = useApi();
   const appSettings = useAppConfig();
+  const checkoutToken = useCheckoutToken();
+  const mail = useEmail();
+  const options = useSelectedPaymentOptions();
   const totalAmount = cost.totalAmount.current;
 
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
@@ -73,8 +73,6 @@ function Extension() {
   //               Handbuch EFinancing (deutsche Version)
   //               Punkt 3.3 seite 15
 
-  const mail = useEmail();
-  const options = useSelectedPaymentOptions();
   console.log("payment options", options);
 
   const createNewConsorsNotifyUUID = useCreateNewConsorsNotifyUUID();
@@ -167,14 +165,33 @@ function Extension() {
     }
   }, [requestUuid]);
 
-  const consorsLink = useConsorsLink(
-    appSettings,
-    totalAmount,
-    mail,
-    name,
-    lastName,
-    consorsUUID,
-    returntocheckoutURL
+  const isEligibleForAkitionzins = useMemo(
+    () => checkProductTypeAktionszinsTag(lines.current),
+    [lines]
+  );
+
+  const consorsLink = useMemo(
+    () =>
+      createConsorsLink(
+        isEligibleForAkitionzins,
+        appSettings,
+        checkoutToken,
+        mail,
+        name,
+        lastName,
+        totalAmount,
+        shop.myshopifyDomain
+      ),
+    [
+      isEligibleForAkitionzins,
+      appSettings,
+      checkoutToken,
+      mail,
+      name,
+      lastName,
+      totalAmount,
+      shop.myshopifyDomain,
+    ]
   );
 
   //  const ssel = useConsorsSSE(consorsUUID, setConsorsState)
@@ -186,7 +203,6 @@ function Extension() {
     [creditAmount, totalAmount?.amount]
   );
 
-  console.log();
   useBuyerJourneyIntercept(({ canBlockProgress }) => {
     // Validate that the age of the buyer is known, and that they're old enough to complete the purchase
     if (canBlockProgress && financeOptionSelected) {
