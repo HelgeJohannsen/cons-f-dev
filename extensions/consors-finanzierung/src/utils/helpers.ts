@@ -1,5 +1,5 @@
 import type { CartLine, PaymentOption } from "@shopify/ui-extensions/checkout";
-import type { AppConfig } from "../hooks/useAppFetchJson";
+import type { AppConfig } from "../types";
 
 interface CheckPaymentMethodSelected {
   paymentOptions: PaymentOption[];

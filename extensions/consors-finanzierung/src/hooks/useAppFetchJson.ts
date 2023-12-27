@@ -3,10 +3,8 @@ import {
   useCheckoutToken,
 } from "@shopify/ui-extensions-react/checkout";
 import { useCallback, useEffect, useState } from "react";
-
-export function backendUrl() {
-  return "https://cons-f-dev.cpro-server.de";
-}
+import type { AppConfig } from "../types";
+import { backendUrl } from "../utils/consorsUrls";
 
 export function useAppFetchJson() {
   const { shop } = useApi();
@@ -60,22 +58,6 @@ export function useCreateNewConsorsNotifyUUID() {
         }),
     [shop.myshopifyDomain, checkoutToken, appFetchJson]
   );
-}
-
-export function consorsNotifyUrl(uuid: string) {
-  return `${backendUrl()}/api/public/notify/${uuid}`;
-}
-export interface AppConfig {
-  id: number;
-  vendorId: string;
-  laufzeiten: string;
-  zeroMonth: string;
-  passwort: string;
-  shop: string;
-  paymentHandle: string;
-  minBestellWert: number;
-  aktionszins: number;
-  aktionsZinsMonate: number;
 }
 
 export function useAppConfig() {
