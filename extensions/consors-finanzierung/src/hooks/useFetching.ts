@@ -7,7 +7,7 @@ export function useFetching(url: string | undefined) {
   const [reload, setReload] = useState(true);
 
   useEffect(() => {
-    let interval = setInterval(() => setReload(true), 5000);
+    let interval = setInterval(() => setReload(true), 10000);
     //destroy interval on unmount
     return () => clearInterval(interval);
   });
@@ -23,7 +23,7 @@ export function useFetching(url: string | undefined) {
           }
           const json = await response.json();
           if (json) {
-            console.log("fetched: ", json);
+            // console.log("fetched: ", json);
             setData(json);
           }
         } catch (error) {

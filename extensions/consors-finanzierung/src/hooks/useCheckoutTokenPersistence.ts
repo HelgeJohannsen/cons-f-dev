@@ -12,7 +12,6 @@ export function useCheckoutTokenPersistence(
   const [ct, setCt] = useState("");
 
   useEffect(() => {
-    console.log("useCreateConsorsNotifyUrl useEffect renders");
     const getNotifyUrl = async () => {
       try {
         const apiEndpoint = `/api/public/checkouts/${encodeURIComponent(

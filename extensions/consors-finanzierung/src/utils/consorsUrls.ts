@@ -24,7 +24,6 @@ function createConsorsLink(
   myshopifyDomain: string
 ): string | undefined {
   if (!appSettings) return undefined;
-  console.log("createConsorsLink renders");
   const { vendorId, aktionszins, aktionsZinsMonate } = appSettings;
   const totalAmountAsString = `${totalAmount.amount}`.replace(".", ",");
   const returntocheckoutURL = returnToCheckoutUrl(myshopifyDomain);

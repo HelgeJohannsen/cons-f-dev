@@ -6,7 +6,6 @@ export function useAppConfig(myshopifyDomain: string): AppConfig | null {
   const [appSettings, setAppSettings] = useState<AppConfig | null>(null);
 
   useEffect(() => {
-    console.log("useAppConfig useEffect");
     const getAppConfig = async () => {
       try {
         const apiEndpoint = "/api/public/config";
@@ -17,7 +16,6 @@ export function useAppConfig(myshopifyDomain: string): AppConfig | null {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        console.log("response useAppConfig", response);
         const data = await response.json();
         setAppSettings(data);
       } catch (error) {

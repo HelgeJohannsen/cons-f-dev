@@ -113,9 +113,6 @@ function Extension() {
   );
 
   useEffect(() => {
-    console.log("first useEffect");
-    console.log("fetchState", fetchState);
-
     if (
       fetchState.data["state"] != undefined &&
       fetchState.data["state"] != "unknown" &&
@@ -183,7 +180,6 @@ function Extension() {
     };
   });
   // TODO: ggf. bleibt consorsLink undefined ?
-  //console.log("creditAmountMissmatch: ", creditAmountMissmatch)
 
   return financeOptionSelected ? (
     <BlockLayout rows={[60, "fill"]} spacing={"none"}>
@@ -202,7 +198,6 @@ function Extension() {
               !mindestBestellwertErreicht ||
               consorsLink == undefined
             }
-            // onPress={startConsorsProcess}
             to={consorsLink}
           >
             Jetzt Finanzieren mit Consors Finanz
