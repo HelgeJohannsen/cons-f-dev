@@ -67,8 +67,8 @@ function Extension() {
   );
 
   const isEligibleForAkitionzins = useMemo(
-    () => checkProductTypeAktionszinsTag(lines.current),
-    [lines]
+    () => checkProductTypeAktionszinsTag(lines.current, appSettings),
+    [lines, appSettings]
   );
 
   const consorsLink = useMemo(
