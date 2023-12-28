@@ -12,7 +12,7 @@ export function useCheckoutTokenPersistence(
   const [ct, setCt] = useState("");
 
   useEffect(() => {
-    const getNotifyUrl = async () => {
+    const setCheckoutTokenToDb = async () => {
       try {
         const apiEndpoint = `/api/public/checkouts/${encodeURIComponent(
           myshopifyDomain
@@ -30,7 +30,7 @@ export function useCheckoutTokenPersistence(
         console.error("could not load or create checkout", error);
       }
     };
-    getNotifyUrl();
+    setCheckoutTokenToDb();
   }, [checkoutToken, myshopifyDomain]);
 
   return ct;
