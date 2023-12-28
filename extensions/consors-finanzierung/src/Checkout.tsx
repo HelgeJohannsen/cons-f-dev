@@ -22,6 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAppConfig } from "./hooks/useAppConfig";
 import { useCheckoutTokenPersistence } from "./hooks/useCheckoutTokenPersistence";
 import { useFetching } from "./hooks/useFetching";
+import { useTest } from "./test/useTest";
 import { backendUrl, createConsorsLink } from "./utils/consorsUrls";
 import {
   checkPaymentMethodSelected,
@@ -53,6 +54,9 @@ function Extension() {
   const paymentOptions = useSelectedPaymentOptions();
   const totalAmount = cost.totalAmount.current;
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
+
+  const test = useTest();
+  console.log("checkout test data", test);
 
   const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
