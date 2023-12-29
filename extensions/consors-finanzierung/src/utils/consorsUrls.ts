@@ -14,7 +14,7 @@ function returnToCheckoutUrl(shopDomain: string) {
 }
 
 function createConsorsLink(
-  isEligibleForAkitionzins: boolean,
+  isEligibleForAktionzins: boolean,
   appSettings: AppConfig | undefined,
   checkoutToken: string,
   mail: string,
@@ -41,11 +41,11 @@ function createConsorsLink(
     notifyURL: notifyUrl,
   };
 
-  const parameters = isEligibleForAkitionzins
+  const parameters = isEligibleForAktionzins
     ? new URLSearchParams({
         ...defaultUrlParams,
-        aktionszins: aktionszins.toString(),
-        aktionsZinsMonate: aktionsZinsMonate.toString(),
+        campaign: aktionszins.toString(),
+        campaignduration: aktionsZinsMonate.toString(),
       })
     : new URLSearchParams({
         ...defaultUrlParams,

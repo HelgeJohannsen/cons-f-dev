@@ -55,8 +55,7 @@ function Extension() {
   const totalAmount = cost.totalAmount.current;
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
 
-  const test = useTest();
-  console.log("checkout test data", test);
+  // const test = useTest(shop.myshopifyDomain);
 
   const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
@@ -70,7 +69,7 @@ function Extension() {
     [paymentOptions, appSettings]
   );
 
-  const isEligibleForAkitionzins = useMemo(
+  const isEligibleForAktionzins = useMemo(
     () => checkProductTypeAktionszinsTag(lines.current, appSettings),
     [lines, appSettings]
   );
@@ -78,7 +77,7 @@ function Extension() {
   const consorsLink = useMemo(
     () =>
       createConsorsLink(
-        isEligibleForAkitionzins,
+        isEligibleForAktionzins,
         appSettings,
         checkoutToken,
         mail,
@@ -88,7 +87,7 @@ function Extension() {
         shop.myshopifyDomain
       ),
     [
-      isEligibleForAkitionzins,
+      isEligibleForAktionzins,
       appSettings,
       checkoutToken,
       mail,

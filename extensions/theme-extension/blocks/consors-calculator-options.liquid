@@ -9,9 +9,8 @@
 
   var shopName = "{{ shop.name }}" + ".myshopify.com";
 
-
-  let aktionszins = 0
-  let aktionsZinsMonate = 0
+  let campaign = 0
+  let campaignduration = 0
 
   let currentProductInfo = {
     id: "{{ product.id }}",
@@ -54,12 +53,12 @@
         const selectedNumber = parseInt(button.textContent);
 
         let campaignInterestRate = false
-        if(aktionszins != 0 && isProductOnAkitions){
-          if(aktionszins == 1 && aktionsZinsMonate == selectedNumber){
+        if(campaign != 0 && isProductOnAkitions){
+          if(campaign == 1 && campaignduration == selectedNumber){
             campaignInterestRate = true
-          }else if (aktionszins == 2 && aktionsZinsMonate >= selectedNumber){
+          }else if (campaign == 2 && campaignduration >= selectedNumber){
             campaignInterestRate = true
-          }else if(aktionszins == 3 && aktionsZinsMonate == selectedNumber){
+          }else if(campaign == 3 && campaignduration == selectedNumber){
             campaignInterestRate = true
           }
         }else{
@@ -89,20 +88,23 @@
     [minMonth, maxMonth, stepMonth] = jsonData.laufzeiten.split(",");
     [firstInterestRate, secondInterestRate, thirdInterestRate] = jsonData.zinsSaetze.split(",");
     
-    aktionsZinsMonate = jsonData.aktionsZinsMonate
-    aktionszins = jsonData.aktionszins
+    campaign = jsonData.aktionszins;
+    campaignduration = jsonData.aktionsZinsMonate;
+
+    let jsontest = {
+      minMonth: Number(minMonth),
+      maxMonth: Number(maxMonth),
+      stepMonth: Number(stepMonth),
+      zeroMonth: Number(zeroMonth),
+      firstInterestRate: Number(firstInterestRate),
+      secondInterestRate: Number(secondInterestRate),
+      thirdInterestRate: Number(thirdInterestRate),
+      productPrice: productPrice,
+      campaign: jsonData.aktionszins,
+      campaignduration: jsonData.aktionsZinsMonate,
+    };
     
     jQuery(function($) {
-      var jsontest = {
-        minMonth: Number(minMonth),
-        maxMonth: Number(maxMonth),
-        stepMonth: Number(stepMonth),
-        zeroMonth: Number(zeroMonth),
-        firstInterestRate: Number(firstInterestRate),
-        secondInterestRate: Number(secondInterestRate),
-        thirdInterestRate: Number(thirdInterestRate),
-        productPrice: productPrice
-      };
       $('#calculator').calculator(jsontest);
     });
   }
