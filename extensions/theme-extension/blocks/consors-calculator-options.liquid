@@ -9,6 +9,26 @@
 
   var shopName = "{{ shop.name }}" + ".myshopify.com";
 
+
+  let aktionszins = 0
+  let aktionsZinsMonate = 0
+
+  let currentProductInfo = {
+    id: "{{ product.id }}",
+    handle: "{{ product.handle }}",
+    type: "{{ product.type }}"
+  };
+
+  let isProductOnAkitions = false;
+
+  {% if collections["akitions-test"] %}
+    let akitionsCollection = {{ collections["akitions-test"].products | json }};
+    const isProductIntoColletion = akitionsCollection.some((collection) => collection.id.toString() == currentProductInfo.id);
+    isProductOnAkitions = currentProductInfo.type === "aktionszins" || isProductIntoColletion
+  {% else %}
+    isProductOnAkitions = false
+  {% endif %}
+
   let [minMonth, maxMonth, stepMonth] = [0, 0, 0];
   let [firstInterestRate, secondInterestRate, thirdInterestRate] = [0, 0, 0];
   let displayCalculator = true
@@ -32,17 +52,30 @@
     for (const button of buttons) {
       if (button.classList.contains('selected')) {
         const selectedNumber = parseInt(button.textContent);
+
+        let campaignInterestRate = false
+        if(aktionszins != 0 && isProductOnAkitions){
+          if(aktionszins == 1 && aktionsZinsMonate == selectedNumber){
+            campaignInterestRate = true
+          }else if (aktionszins == 2 && aktionsZinsMonate >= selectedNumber){
+            campaignInterestRate = true
+          }else if(aktionszins == 3 && aktionsZinsMonate == selectedNumber){
+            campaignInterestRate = true
+          }
+        }else{
+          campaignInterestRate = false
+        }
         if(selectedNumber === parsedMinMonth){
-          document.getElementById('campaignInterestRate').innerText = `${firstInterestRate} %`;
+          document.getElementById('campaignInterestRate').innerText = campaignInterestRate ? "0.0 %" : `${firstInterestRate} %`;
           document.getElementById('campaignDuration').innerText = minMonth;
           return
         }
         if (selectedNumber === parsedMaxMonth){
-          document.getElementById('campaignInterestRate').innerText = `${thirdInterestRate} %`;
+          document.getElementById('campaignInterestRate').innerText = campaignInterestRate ? "0.0 %" : `${thirdInterestRate} %`;
           document.getElementById('campaignDuration').innerText = maxMonth;
           return
         }
-        document.getElementById('campaignInterestRate').innerText = `${secondInterestRate} %`;
+        document.getElementById('campaignInterestRate').innerText = campaignInterestRate ? "0.0 %" : `${secondInterestRate} %`;
         document.getElementById('campaignDuration').innerText = selectedNumber;
         return
       }
@@ -55,6 +88,9 @@
     displayCalculator = productPrice > (jsonData.minBestellWert/100);
     [minMonth, maxMonth, stepMonth] = jsonData.laufzeiten.split(",");
     [firstInterestRate, secondInterestRate, thirdInterestRate] = jsonData.zinsSaetze.split(",");
+    
+    aktionsZinsMonate = jsonData.aktionsZinsMonate
+    aktionszins = jsonData.aktionszins
     
     jQuery(function($) {
       var jsontest = {
@@ -126,6 +162,7 @@
     function setCalculatorDisplay() {
       const withoutLogoCalculator = document.getElementById('withoutLogoCalculator');
       const withLogoCalculator = document.getElementById('withLogoCalculator');
+
       if(displayCalculator && withLogoCalculator){
         withLogoCalculator.style.display = "flex";
       }
