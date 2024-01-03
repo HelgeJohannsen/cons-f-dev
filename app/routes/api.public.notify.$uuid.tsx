@@ -37,22 +37,7 @@ export async function action({ request, params }: LoaderArgs) {
   } */
 
   const checkout = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
-  const shop = "helge-test.myshopify.com"
-  const orderID = params.uuid!
-  if (checkout == null) {
-    console.log("orderID:", orderID)
-   // const orderExists = await checkIfOrderExists(shop,orderID)
-    // notification for a non existing checkout
-    // console.log("checkout not found");
-    const orderExists = true
-    if(orderExists){
-      const orderId = Number(params.uuid)
-      createCheckoutByOrderID(shop,params.uuid!, orderId)
-      console.log("new Checkout created")
-      throw new Response("new Checkout by OrderID", {
-        status: 200,
-      });
-    }
+  if(checkout == null){
     throw new Response("Not Found", {
       status: 404,
     });
