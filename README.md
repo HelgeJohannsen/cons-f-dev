@@ -11,8 +11,9 @@ To access db:
 ```bash
 docker exec -it cons-f-dev_db mysql -u root -p
 show databases;
-use e-bike;
+use cons-f-dev;
  Select * from Config;
+  Select * from Checkout;
  DELETE FROM ShopifyOrderCreatedUnhandled WHERE orderId=5781596373321;
 
  UPDATE Config
