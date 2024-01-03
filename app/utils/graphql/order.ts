@@ -4,17 +4,16 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
   const orderGlobalIdentifier = "gid://shopify/Order/" + order_id
   const gqlClient = await getGraphqlClient(shop);
   const query = `{
-        order(id: "${orderGlobalIdentifier}"){
-            id
-      }
-    }`;
-    console.log("orderGlobalIdentifier",orderGlobalIdentifier)
-  const name = await gqlClient.query({ data: { query } });
-  console.log("name", name)
-  const orderID = (name.body as any)["data"]["order"]["id"];
+    order(id: "gid://shopify/Order/5534614749463"){
+        tags
+  }
+}`;
+const metaFields = await gqlClient.query({ data: { query } });
+const tags = (metaFields.body as any)["data"]["order"]["tags"];
+  console.log("tags", tags)
 
-  if (orderID == null) {
-    console.error("order does not exist", orderID);
+  if (tags == null) {
+    console.error("order does not exist", tags);
     return false;
   }
   return true;
