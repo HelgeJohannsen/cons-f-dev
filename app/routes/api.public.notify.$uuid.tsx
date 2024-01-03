@@ -36,7 +36,24 @@ export async function action({ request, params }: LoaderArgs) {
     throw new Response("could not validate request", {status:401})  
   } */
 
+  const checkout1 = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
+  const shop = "helge-test.myshopify.com"
+  const orderID = params.uuid!
+  if (checkout1 == null) {
+    console.log("orderID:", orderID)
+   // const orderExists = await checkIfOrderExists(shop,orderID)
+    // notification for a non existing checkout
+    // console.log("checkout not found");
+    const orderExists = true
+    if(orderExists){
+      const orderId = Number(params.uuid)
+      createCheckoutByOrderID(shop,params.uuid!, orderId)
+      console.log("new Checkout created")
+    }
+
+  }
   const checkout = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
+  
   if(checkout == null){
     throw new Response("Not Found", {
       status: 404,

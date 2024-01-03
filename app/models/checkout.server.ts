@@ -3,16 +3,7 @@ import db from "../db.server";
 import { randomUUID } from "crypto";
 
 export function getCheckout(uuid: string) {
-  const checkout = db.checkout.findUnique({ where: { uuid } });
-  if(checkout == null){
-    const shop = "helge-test.myshopify.com"
-    const orderID = uuid!
-        const orderId = Number(uuid)
-    return createCheckoutByOrderID(shop,uuid!, orderId)
-  }else{
-    return checkout
-  }
-
+  return db.checkout.findUnique({ where: { uuid } });
 }
 export function getCheckoutByTransactionId(transaction_id: string) {
   return db.checkout.findFirst({ where: { transaction_id } });
