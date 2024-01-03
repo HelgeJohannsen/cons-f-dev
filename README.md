@@ -9,7 +9,7 @@ set DATABASE_URL=mysql://root:oY8io2Shshoo9Eix@localhost:3306/bike_db
 To access db:
 
 ```bash
-docker exec -it multicycle_db mysql -u root -p
+docker exec -it cons-f-dev_db mysql -u root -p
 show databases;
 use e-bike;
  Select * from Config;

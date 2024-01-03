@@ -4,6 +4,7 @@ import {
   createCheckoutState,
   checkoutAddTransactionId,
   getCheckoutByTransactionId,
+  createCheckoutByOrderID,
 } from "../models/checkout.server";
 import {
   checkNotifyHash,
@@ -13,6 +14,7 @@ import { z } from "zod";
 import { authenticate } from "../shopify.server";
 import { orderMarkAsPaid } from "~/utils/graphql/markAsPaid";
 import { addTags } from "~/utils/graphql/orderTags";
+import { checkIfOrderExists } from "~/utils/graphql/order";
 
 export async function action({ request, params }: LoaderArgs) {
   /**
@@ -35,10 +37,15 @@ export async function action({ request, params }: LoaderArgs) {
   } */
 
   const checkout = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
-
+  const shop = "helge-test"
   if (checkout == null) {
+   const orderExists = await checkIfOrderExists(shop,params.uuid!)
     // notification for a non existing checkout
     // console.log("checkout not found");
+    if(orderExists){
+      const orderId = Number(params.uuid)
+      createCheckoutByOrderID(shop,params.uuid!, orderId)
+    }
     throw new Response("Not Found", {
       status: 404,
     });
