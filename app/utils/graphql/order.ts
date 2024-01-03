@@ -10,6 +10,7 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
     }`;
     console.log("orderGlobalIdentifier",orderGlobalIdentifier)
   const name = await gqlClient.query({ data: { query } });
+  console.log("name", name)
   const orderID = (name.body as any)["data"]["order"]["id"];
 
   if (orderID == null) {
