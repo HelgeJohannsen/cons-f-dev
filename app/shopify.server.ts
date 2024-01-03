@@ -26,6 +26,7 @@ import {
   removeFromOrderFulfillmentQueue,
 } from "./models/ShopifyOrderFulfillment.server";
 import { handleFulfillmentQueue } from "./utils/shopify/webhooks/ordersFulfillment";
+import { handleOrderCancelQueue } from "./utils/shopify/webhooks/ordersCancel";
 /*
 const api = shopifyApi({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -53,6 +54,21 @@ async function BackgroundLoop() {
       ); //TODO: handle Error using backoff timer
   });
   await Promise.all(toHandle);
+
+  const unhandledOrderCancel = await getShopifyOrderCancelUnhandled()
+  const toHandleCancel = unhandledOrderCancel.map( async unhandledOrderCancel => {
+    console.log("unhandledOrderCancel", unhandledOrderCancel)
+    // TODO: handle Order
+    
+    await handleOrderCancelQueue(unhandledOrderCancel)
+    .then( (sucess) => {
+      if(sucess){
+        handleShopifyOrderCancel(unhandledOrderCancel.orderId)
+      }
+    }
+    ).catch( (reason) => console.error("Error handleShopifyOrderCancel:", reason)) //TODO: handle Error using backoff timer
+  })
+  await Promise.all(toHandleCancel)
 
   const unhandledOrderFulfillment = await getShopifyOrderFulfillmentUnhandled();
   const toHandleFulfillment = unhandledOrderFulfillment.map(
