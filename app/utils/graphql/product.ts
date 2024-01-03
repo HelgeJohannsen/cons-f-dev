@@ -1,11 +1,11 @@
 import { getGraphqlClient } from "../shopify/getGraphqlClient";
 
 export async function checkIfProductHasCollection(shop: string, productid: string) {
-    const productGlobalIdentifier = "gid://shopify/Product/8301155221783"  
+    const productGlobalIdentifier = "gid://shopify/Product/" + productid 
   const collectionGlobalIdentifier = "gid://shopify/Collection/467696386327"
   const gqlClient = await getGraphqlClient(shop);
   const query = `{
-    product(id: "gid://shopify/Product/8301155221783") {
+    product(id: "${productGlobalIdentifier}") {
       inCollection(id: "${collectionGlobalIdentifier}")
     }
   }`;
