@@ -12,7 +12,7 @@ export async function checkIfProductHasCollection(shop: string, productid: strin
     console.log("collectionGlobalIdentifier",collectionGlobalIdentifier)
   const name = await gqlClient.query({ data: { query } });
   const aktionszins = (name.body as any)["data"]["product"]["inCollection"];
-  console.log("aktionszins",aktionszins)
+  //console.log("aktionszins",aktionszins)
 
   return aktionszins;
 }
