@@ -5,11 +5,12 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
   const gqlClient = await getGraphqlClient(shop);
   const query = `{
         order(id: "${orderGlobalIdentifier}"){
-            id
+            name
       }
     }`;
-  const id = await gqlClient.query({ data: { query } });
-  const orderID = (id.body as any)["data"]["order"]["id"];
+    console.log("orderGlobalIdentifier",orderGlobalIdentifier)
+  const name = await gqlClient.query({ data: { query } });
+  const orderID = (name.body as any)["data"]["order"]["name"];
 
   if (orderID == null) {
     console.error("order does not exist", orderID);
