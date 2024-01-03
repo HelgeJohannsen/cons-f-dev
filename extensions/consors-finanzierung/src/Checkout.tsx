@@ -20,14 +20,11 @@ import type { InterceptorRequest } from "@shopify/ui-extensions/checkout";
 import { useEffect, useMemo, useState } from "react";
 
 import { useAppConfig } from "./hooks/useAppConfig";
+import { useCheckAktionszins } from "./hooks/useCheckAktionszins";
 import { useCheckoutTokenPersistence } from "./hooks/useCheckoutTokenPersistence";
 import { useFetching } from "./hooks/useFetching";
-import { useTest } from "./test/useTest";
 import { backendUrl, createConsorsLink } from "./utils/consorsUrls";
-import {
-  checkPaymentMethodSelected,
-  checkProductTypeAktionszinsTag,
-} from "./utils/helpers";
+import { checkPaymentMethodSelected } from "./utils/helpers";
 
 export default reactExtension(
   "purchase.checkout.payment-method-list.render-before",
@@ -55,7 +52,10 @@ function Extension() {
   const totalAmount = cost.totalAmount.current;
   const currencyIsSupported = totalAmount?.currencyCode == "EUR";
 
-  // const test = useTest(shop.myshopifyDomain);
+  const isEligibleForAktionzins = useCheckAktionszins(
+    lines.current,
+    appSettings
+  );
 
   const { countryCode, name, lastName } = useShippingAddress()!;
   const countryIsSupported = countryCode == "DE"; // || countryCode == "AT"
@@ -67,11 +67,6 @@ function Extension() {
   const financeOptionSelected = useMemo(
     () => checkPaymentMethodSelected(paymentOptions, appSettings),
     [paymentOptions, appSettings]
-  );
-
-  const isEligibleForAktionzins = useMemo(
-    () => checkProductTypeAktionszinsTag(lines.current, appSettings),
-    [lines, appSettings]
   );
 
   const consorsLink = useMemo(

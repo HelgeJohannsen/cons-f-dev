@@ -18,15 +18,4 @@ const checkPaymentMethodSelected = (
   }
 };
 
-const checkProductTypeAktionszinsTag = (
-  currentLines: CartLine[],
-  appSettings: AppConfig
-): boolean => {
-  if (!appSettings?.aktionszins) return false;
-  const allProductsHasTag = currentLines.every(
-    (current) => current.merchandise.product.productType === "aktionszins"
-  );
-  return allProductsHasTag;
-};
-
-export { checkPaymentMethodSelected, checkProductTypeAktionszinsTag };
+export { checkPaymentMethodSelected };
