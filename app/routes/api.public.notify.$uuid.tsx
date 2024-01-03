@@ -41,9 +41,10 @@ export async function action({ request, params }: LoaderArgs) {
   const orderID = params.uuid!
   if (checkout == null) {
     console.log("orderID:", orderID)
-   const orderExists = await checkIfOrderExists(shop,orderID)
+   // const orderExists = await checkIfOrderExists(shop,orderID)
     // notification for a non existing checkout
     // console.log("checkout not found");
+    const orderExists = true
     if(orderExists){
       const orderId = Number(params.uuid)
       createCheckoutByOrderID(shop,params.uuid!, orderId)
