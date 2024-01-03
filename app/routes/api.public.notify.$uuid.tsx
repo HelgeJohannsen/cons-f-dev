@@ -69,6 +69,8 @@ export async function action({ request, params }: LoaderArgs) {
     ([_name, value]) => value.length > 0
   );
   let notification: z.infer<typeof consorsNotification>;
+
+
   try {
     const obj = Object.fromEntries(nonEmptySearchParams);
     // console.log(obj);
@@ -87,6 +89,9 @@ export async function action({ request, params }: LoaderArgs) {
     });
   }
 
+  if(checkout.transaction_id == null){
+    await checkoutAddTransactionId(checkout.uuid, notification.transaction_id!);
+  }
   if (notification.status == "error") {
     const error = await createCheckoutState(
       checkout,
