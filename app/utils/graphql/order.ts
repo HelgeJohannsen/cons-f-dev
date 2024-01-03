@@ -10,7 +10,7 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
 }`;
 const metaFields = await gqlClient.query({ data: { query } });
 const tags = (metaFields.body as any)["data"]["order"]["tags"];
-  console.log("name", name)
+  console.log("tags", tags)
 
   if (tags == null) {
     console.error("order does not exist", tags);
