@@ -30,8 +30,8 @@ export async function webbhook_oredersCancel(shop: string, payload: unknown) {
         "Cancel order because it is Consors Finanzierung:",
         orderData
       );
-
-      const checkout = await getCheckoutByOrderId(orderData.id);
+      const id = BigInt(orderData.id)    
+      const checkout = await getCheckoutByOrderId(id);
       if (checkout == null) {
         console.error("no checkout with given uuid in database", orderData.id);
         return undefined;

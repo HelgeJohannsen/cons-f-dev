@@ -31,7 +31,7 @@ import { authenticate } from "../shopify.server";
 import { DiamondAlertMajor, ImageMajor } from "@shopify/polaris-icons";
 import { useEffect, useState } from "react";
 import { getConsorsClient, resetConsorsClient } from "~/utils/consors/api";
-import { addTags } from "~/utils/graphql/orderTags";
+import { addTags } from "~/utils/graphql/order";
 import { createConfig, getOrCreateConfig } from "../models/config.server";
 
 type AktionszinsOptionsI = {

@@ -7,7 +7,7 @@ import { getConsorsused } from "../../../utils/graphql/orderMetafields";
 
 import { z } from "zod";
 import { isAppLive } from "~/models/config.server";
-import { addTags } from "~/utils/graphql/orderTags";
+import { addTags } from "~/utils/graphql/order";
 import {
   createShopifyOrderCreatedUnhandled,
   incrementCounterShopifyOrderCreatedUnhandled,

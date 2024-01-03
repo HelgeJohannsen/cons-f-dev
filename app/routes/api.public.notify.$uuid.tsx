@@ -13,7 +13,7 @@ import {
 import { z } from "zod";
 import { authenticate } from "../shopify.server";
 import { orderMarkAsPaid } from "~/utils/graphql/markAsPaid";
-import { addTags } from "~/utils/graphql/orderTags";
+import { addTags } from "~/utils/graphql/order";
 import { checkIfOrderExists } from "~/utils/graphql/order";
 
 export async function action({ request, params }: LoaderArgs) {
