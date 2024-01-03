@@ -4,7 +4,7 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
   const orderGlobalIdentifier = "gid://shopify/Order/" + order_id
   const gqlClient = await getGraphqlClient(shop);
   const query = `{
-        order(id: "${orderGlobalIdentifier}"){
+        order(id: "gid://shopify/Order/5534614749463"){
             id
       }
     }`;
