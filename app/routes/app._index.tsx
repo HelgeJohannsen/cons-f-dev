@@ -40,6 +40,7 @@ type AktionszinsOptionsI = {
 }[];
 
 export async function loader({ request }) {
+  console.log(request)
   const { admin, session } = await authenticate.admin(request);
   const Settings = await getOrCreateConfig(session.shop);
 
