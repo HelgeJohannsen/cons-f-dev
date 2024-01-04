@@ -15,8 +15,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const res =  await checkPayment("helge-test.myshopify.com",id )
   console.log("res", res)
-    const response = json({ res });
-    response.headers.append("Access-Control-Allow-Origin", "*");
-    return response;
-
+  if (res == null) {
+    throw new Response("shop not found", {
+      status: 404,
+    });
+  }
+  const response = json(res);
+  response.headers.append("Access-Control-Allow-Origin", "*");
+  return response;
 };

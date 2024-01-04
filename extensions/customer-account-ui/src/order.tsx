@@ -8,6 +8,7 @@ import {
   useOrder,
   useTotalAmount,
 } from "@shopify/ui-extensions-react/customer-account";
+import { useEffect } from "react";
 
 export default reactExtension(
   "customer-account.order-status.block.render",
@@ -25,6 +26,26 @@ function Extension() {
     order_amount: textAmount,
     notifyURL: `https://cons-f-dev.cpro-server.de/api/public/notify/${order_id}`,
   });
+
+  useEffect(() => {
+    const getAppConfig = async () => {
+      try {
+        const apiEndpoint = "/api/public/checkOrder/5534614749463";
+        const parameters = new URLSearchParams({ shop: "helge-test.myshopify.com" });
+        const requestUrl = `https://cons-f-dev.cpro-server.de${apiEndpoint}`;
+
+        const response = await fetch(requestUrl, { method: "GET" });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("t",data);
+      } catch (error) {
+        console.error("Error fetching AppConfig:", error);
+      }
+    };
+    getAppConfig();
+  }, []);
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
   const link = `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
   if (order) {

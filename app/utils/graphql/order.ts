@@ -1,6 +1,6 @@
 import { getGraphqlClient } from "../shopify/getGraphqlClient";
 export async function checkPayment(shop: string, productid: string) {
-  const orderGlobalIdentifier = "gid://shopify/Product/" + productid 
+  const orderGlobalIdentifier = "gid://shopify/Order/" + productid 
 const gqlClient = await getGraphqlClient(shop);
 const query = `{
 	order(id:"${orderGlobalIdentifier}") {
