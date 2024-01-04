@@ -1,4 +1,5 @@
 import {
+  createCheckoutByOrderID,
   getCheckoutByOrderId,
   setOrderId,
 } from "../../../models/checkout.server";
@@ -46,6 +47,8 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
             "Finanzierung by Consors Finanz"
           )
         ) {
+          const orderId = String(orderData.id)
+          createCheckoutByOrderID(shop, orderId, orderData.id)
           const createdShopifyOrderCreatedUnhandled = await setOrderId(
             orderData.checkout_token,
             orderData.id
