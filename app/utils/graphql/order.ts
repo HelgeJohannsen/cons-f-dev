@@ -1,5 +1,18 @@
 import { getGraphqlClient } from "../shopify/getGraphqlClient";
+export async function checkPayment(shop: string, productid: string) {
+  const orderGlobalIdentifier = "gid://shopify/Product/" + productid 
+const gqlClient = await getGraphqlClient(shop);
+const query = `{
+	order(id:"${orderGlobalIdentifier}") {
+		paymentGatewayNames
+	}
+}`;
+const paymentGatewayNames = await gqlClient.query({ data: { query } });
+const paymentGatewayName = (paymentGatewayNames.body as any)["data"]["product"]["paymentGatewayNames"];
+//console.log("aktionszins",aktionszins)
 
+return paymentGatewayName;
+}
 export async function checkIfOrderExists(shop: string, order_id: string) {
   const orderGlobalIdentifier = "gid://shopify/Order/" + order_id
   const gqlClient = await getGraphqlClient(shop);
@@ -8,6 +21,8 @@ export async function checkIfOrderExists(shop: string, order_id: string) {
         tags
   }
 }`;
+
+
 const metaFields = await gqlClient.query({ data: { query } });
 const tags = (metaFields.body as any)["data"]["order"]["tags"];
   console.log("tags", tags)

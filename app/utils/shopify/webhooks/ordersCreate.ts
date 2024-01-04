@@ -46,11 +46,6 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
             "Finanzierung by Consors Finanz"
           )
         ) {
-          await addTags(
-            shop,
-            orderData.admin_graphql_api_id,
-            "Consors Finanzierung"
-          );
           const createdShopifyOrderCreatedUnhandled = await setOrderId(
             orderData.checkout_token,
             orderData.id
@@ -62,6 +57,12 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.current_total_price
             )
           );
+          await addTags(
+            shop,
+            orderData.admin_graphql_api_id,
+            "Consors Finanzierung"
+          );
+
 
           // console.log(
           //   "createdShopifyOrderCreatedUnhandled",
