@@ -13,7 +13,7 @@ import { restResources } from "@shopify/shopify-api/rest/admin/2023-07";
 import prisma from "../../db.server";
 
 const appHostName =
-  "cancellation-likelihood-expansys-reflect.trycloudflare.com";
+process.env.SHOPIFY_APP_URL;
 
 const api = shopifyApi({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -21,7 +21,7 @@ const api = shopifyApi({
     process.env.SHOPIFY_API_SECRET || "fe93e07b0e2bf2a7fe45cbacd0d3a907",
   apiVersion: LATEST_API_VERSION,
   scopes: process.env.SCOPES?.split(","),
-  hostName: appHostName,
+  hostName: appHostName!,
   isEmbeddedApp: true,
 });
 
