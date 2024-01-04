@@ -8,7 +8,7 @@ const query = `{
 	}
 }`;
 const paymentGatewayNames = await gqlClient.query({ data: { query } });
-const paymentGatewayName = (paymentGatewayNames.body as any)["data"]["product"]["paymentGatewayNames"];
+const paymentGatewayName = (paymentGatewayNames.body as any)["data"]["order"]["paymentGatewayNames"];
 //console.log("aktionszins",aktionszins)
 
 return paymentGatewayName;
