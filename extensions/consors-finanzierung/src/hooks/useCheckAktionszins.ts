@@ -1,38 +1,44 @@
 import type { CartLine } from "@shopify/ui-extensions/checkout";
 import { useEffect, useState } from "react";
-import type { AppConfig } from "../types";
 import { backendUrl } from "../utils/consorsUrls";
 
 export const useCheckAktionszins = (
   currentLines: CartLine[],
-  appSettings: AppConfig | undefined | null
+  aktionszins: number | undefined | null
 ) => {
-  const [checkAktionszins, setCheckAktionszins] = useState(false);
-
-  const checkoutProductsIds = currentLines.map((line) => {
-    const productIdParts = line.merchandise.product.id.split("/");
-    const id = productIdParts[productIdParts.length - 1];
-    return id;
-  });
+  const [isAktionszinsApplicable, setIsAktionszinsApplicable] = useState(false);
 
   useEffect(() => {
-    const getTestData = async () => {
-      const areProductsAktionColletion = await Promise.all(
-        checkoutProductsIds.map(async (productId) => {
-          const apiEndpoint = `api/public/ProductAZ/${productId}`;
-          const requestUrl = `${backendUrl()}/${apiEndpoint}`;
-          const response = await fetch(requestUrl, { method: "GET" });
-          const data: boolean = await response.json();
-          return data;
-        })
-      );
-      const checkProductsAktionColletion = areProductsAktionColletion.every(
-        (data) => data
-      );
-      setCheckAktionszins(checkProductsAktionColletion);
-    };
-    getTestData();
-  }, [checkoutProductsIds]);
+    if (!aktionszins || currentLines.length === 0) {
+      setIsAktionszinsApplicable(false);
+      return;
+    }
 
-  return !appSettings || !appSettings.aktionszins ? false : checkAktionszins;
+    const checkAktionszinsForProducts = async () => {
+      try {
+        const productIds = currentLines.map((line) =>
+          line.merchandise.product.id.split("/").pop()
+        );
+
+        const results = await Promise.all(
+          productIds.map(async (productId) => {
+            const response = await fetch(
+              `${backendUrl()}/api/public/ProductAZ/${productId}`,
+              { method: "GET" }
+            );
+            return response.json();
+          })
+        );
+
+        setIsAktionszinsApplicable(results.every((result) => result));
+      } catch (error) {
+        console.error("Error checking aktionszins:", error);
+        setIsAktionszinsApplicable(false);
+      }
+    };
+
+    checkAktionszinsForProducts();
+  }, [currentLines, aktionszins]);
+
+  return isAktionszinsApplicable;
 };

@@ -54,7 +54,7 @@ function Extension() {
 
   const isEligibleForAktionzins = useCheckAktionszins(
     lines.current,
-    appSettings
+    appSettings?.aktionszins
   );
 
   const { countryCode, name, lastName } = useShippingAddress()!;

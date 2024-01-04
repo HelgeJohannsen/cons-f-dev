@@ -91,7 +91,7 @@
     campaign = jsonData.aktionszins;
     campaignduration = jsonData.aktionsZinsMonate;
 
-    let jsontest = {
+    let calculatorData = jsonData.aktionszins != 0 ? {
       minMonth: Number(minMonth),
       maxMonth: Number(maxMonth),
       stepMonth: Number(stepMonth),
@@ -101,11 +101,20 @@
       thirdInterestRate: Number(thirdInterestRate),
       productPrice: productPrice,
       campaign: jsonData.aktionszins,
-      campaignduration: jsonData.aktionsZinsMonate,
-    };
-    
+      campaignduration: jsonData.aktionsZinsMonate
+    } : {
+      minMonth: Number(minMonth),
+      maxMonth: Number(maxMonth),
+      stepMonth: Number(stepMonth),
+      zeroMonth: Number(zeroMonth),
+      firstInterestRate: Number(firstInterestRate),
+      secondInterestRate: Number(secondInterestRate),
+      thirdInterestRate: Number(thirdInterestRate),
+      productPrice: productPrice,
+    }
+    console.log("calculatorData", calculatorData)
     jQuery(function($) {
-      $('#calculator').calculator(jsontest);
+      $('#calculator').calculator(calculatorData);
     });
   }
 
