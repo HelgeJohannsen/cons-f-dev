@@ -8,7 +8,7 @@ import {
   useOrder,
   useTotalAmount,
 } from "@shopify/ui-extensions-react/customer-account";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default reactExtension(
   "customer-account.order-status.block.render",
@@ -20,6 +20,8 @@ function Extension() {
   const cost = useTotalAmount();
   const textAmount = `${cost.amount}`;
   const order_id = order.id.split("Order/")[1];
+  const [showExt, setShowExt] = useState(false);
+
   const parameters = new URLSearchParams({
     vendorid: "8403",
     order_id: order_id,
@@ -40,6 +42,7 @@ function Extension() {
         }
         const data = await response.json();
         console.log("t",data);
+        setShowExt(data)
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }
@@ -48,7 +51,7 @@ function Extension() {
   }, []);
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
   const link = `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
-  if (order) {
+  if (order && {showExt}) {
     return (
       <InlineLayout
         columns={["45%", "50%"]}
