@@ -66,11 +66,11 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
             console.log("Checkout neu erstellt nur mit order ID");
           }
           )
-          /* await addTags(
+          addTags(
             shop,
             orderData.admin_graphql_api_id,
             "Consors Finanzierung"
-          ); */
+          );
 
 
           // console.log(
