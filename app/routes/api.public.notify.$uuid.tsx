@@ -37,7 +37,10 @@ export async function action({ request, params }: LoaderArgs) {
   } */
 
   const checkoutByUUID = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
-  const shop = "helge-test.myshopify.com"
+  const shop = process.env.SHOPIFY_SHOP
+  if(!shop){
+    console.log("shop undefined")
+  }
   const orderID = params.uuid!
   if (!checkoutByUUID) {
     console.log("orderID:", orderID)

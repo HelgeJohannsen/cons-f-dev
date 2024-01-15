@@ -5,6 +5,7 @@ services:
     #    image: "traefik/whoami"
     environment:
       SHOPIFY_APP_URL: "https://cons-f-dev.cpro-server.de"
+      SHOPIFY_SHOP: "helge-test.myshopify.com"
       HOST: "0.0.0.0"
       SHOPIFY_API_KEY: "a933d5647dd636d6d33c9ed9bc9f1164"
       SHOPIFY_API_SECRET: "03f7217186713b3f85fe97c0fb2c6679"
