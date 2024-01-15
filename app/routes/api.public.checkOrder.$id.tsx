@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { z } from "zod";
-import { getCheckoutByOrderId, getCheckoutState } from "../models/checkout.server";
+import { getCheckoutState } from "../models/checkout.server";
 
 import { EventStream } from "remix-sse";
 import type { HeadersFunction } from "@remix-run/node"; // or cloudflare/deno
@@ -10,15 +10,19 @@ import { checkPayment } from "~/utils/graphql/order";
 import { authenticate } from "~/shopify.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const order_id =  BigInt(params.id!)
-  const checkout = getCheckoutByOrderId(order_id)
-  if (checkout == null) {
-    const response = json(false);
-    response.headers.append("Access-Control-Allow-Origin", "*");
-    return response;
-  }else{
-    const response = json(true);
-    response.headers.append("Access-Control-Allow-Origin", "*");
-    return response;
+  const { topic, shop, session, payload } = await authenticate.webhook(request);
+
+  const id = params.id!;
+  console.log("session", session)
+  const res =  await checkPayment("helge-test.myshopify.com",id )
+  console.log("res", res)
+  if (res == null) {
+    throw new Response("shop not found", {
+      status: 404,
+    });
   }
+  console.log("paymwentcheck", res)
+  const response = json(res);
+  response.headers.append("Access-Control-Allow-Origin", "*");
+  return response;
 };
