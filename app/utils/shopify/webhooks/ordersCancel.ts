@@ -51,7 +51,7 @@ export async function handleOrderCancelQueue({shop, orderId, admin_graphql_api_i
   const oderId = admin_graphql_api_id.split("Order/")[1]
   console.log("orderId from db", oderId)
   const checkout = await getCheckout(oderId)
-  if(checkout == null){
+  if(!checkout){
     console.error("no checkout with given uuid in database", oderId)
     return undefined
   }
