@@ -4,7 +4,7 @@ export async function checkPayment(shop: string, productid: string) {
 const gqlClient = await getGraphqlClient(shop);
 console.log("client", gqlClient)
 const query = `{
-	order(id: "gid://shopify/Order/5534614749463") {
+	order(id: "gid://shopify/Order/${orderGlobalIdentifier}") {
 		paymentGatewayNames
 	}
 }`;
