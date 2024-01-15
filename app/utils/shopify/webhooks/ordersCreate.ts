@@ -48,7 +48,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
           )
         ) {
           const orderId = String(orderData.id)
-          createCheckoutByOrderID(shop, orderId, orderData.id)
+          //createCheckoutByOrderID(shop, orderId, orderData.id)
           const createdShopifyOrderCreatedUnhandled = await setOrderId(
             orderData.checkout_token,
             orderData.id
@@ -59,12 +59,16 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.admin_graphql_api_id,
               orderData.current_total_price
             )
-          );
-          await addTags(
+          ).catch(() => {
+            const checkout = createCheckoutByOrderID(shop,"",orderData.id)
+            console.log("Checkout neu erstellt nur mit order ID");
+          }
+          )
+          /* await addTags(
             shop,
             orderData.admin_graphql_api_id,
             "Consors Finanzierung"
-          );
+          ); */
 
 
           // console.log(
@@ -73,11 +77,11 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
           // );
         } else {
           // TODO not being using .. getConsorused, now is using payment_gateway_names
-          const consorsUsed = await getConsorsused(
+/*           const consorsUsed = await getConsorsused(
             shop,
             orderData.admin_graphql_api_id
-          );
-          // console.log("Consors Payment not used", consorsUsed);
+          ); */
+
           return false;
         }
       } else {
