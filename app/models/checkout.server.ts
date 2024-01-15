@@ -10,10 +10,10 @@ export async function getCheckout(uuid: string) {
   if(!checkout){
     console.log("kein checkout uuid",checkout)
     const orderId = BigInt(uuid)
-    const c2 = await db.checkout.findFirst({ where: { orderId } });
-    if(c2){
-      console.log("checkout mit orderID gefunden",checkout)
-      return c2
+    const checkoutOrderID = await db.checkout.findFirst({ where: { orderId } });
+    if(checkoutOrderID){
+      console.log("checkout mit orderID gefunden",checkoutOrderID)
+      return checkoutOrderID
     }
   }else{
     console.log("checkout mit uuid gefunden",checkout)
