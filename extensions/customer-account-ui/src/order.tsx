@@ -30,7 +30,7 @@ function Extension() {
   useEffect(() => {
     const getAppConfig = async () => {
       try {
-        const apiEndpoint = "/api/public/checkOrder/5534614749463";
+        const apiEndpoint = `/api/public/checkOrder/${order_id}`;
         const parameters = new URLSearchParams({ shop: "helge-test.myshopify.com" });
         const requestUrl = `https://cons-f-dev.cpro-server.de${apiEndpoint}`;
 

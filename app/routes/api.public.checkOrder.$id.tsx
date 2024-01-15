@@ -10,10 +10,10 @@ import { checkPayment } from "~/utils/graphql/order";
 import { authenticate } from "~/shopify.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const { topic, shop, session, payload } = await authenticate.webhook(request);
+ // const { topic, shop, session, payload } = await authenticate.webhook(request);
 
   const id = params.id!;
-  console.log("session", session)
+ // console.log("session", session)
   const res =  await checkPayment("helge-test.myshopify.com",id )
   console.log("res", res)
   if (res == null) {
