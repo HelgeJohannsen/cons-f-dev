@@ -5,12 +5,21 @@ import { randomUUID } from "crypto";
 export function getCheckout(uuid: string) {
   return db.checkout.findUnique({ where: { uuid } });
 }
-export async function isConsors(uuid: string) {
+export async function getCheckout2(uuid: string) {
   const checkout = await db.checkout.findUnique({ where: { uuid } });
-  if(checkout != undefined){
-
+  if(!checkout){
+    console.log("kein checkout uuid",checkout)
+    const orderId = BigInt(uuid)
+    const c2 = await db.checkout.findFirst({ where: { orderId } });
+    if(c2){
+      console.log("checkout mit orderID gefunden",checkout)
+      return c2
+    }
+  }else{
+    console.log("checkout mit uuid gefunden",checkout)
+    return checkout
   }
-  console.log("ce",checkout)
+
 }
 export function getCheckoutByTransactionId(transaction_id: string) {
   return db.checkout.findFirst({ where: { transaction_id } });
