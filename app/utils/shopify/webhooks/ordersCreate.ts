@@ -35,7 +35,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
     const isLive = await isAppLive(shop);
 
     if (orderData.checkout_token == undefined) {
-      // console.log("ignoring order, no checkout token", orderData);
+       console.log("ignoring order, no checkout token", orderData);
     } else {
       //console.log("consorsUsed", consorsUsed)
       if (isLive) {
@@ -59,6 +59,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.admin_graphql_api_id,
               orderData.current_total_price
             )
+            
           ).catch(() => {
             const checkout = createCheckoutByOrderID(shop,"",orderData.id)
             console.log("Checkout neu erstellt nur mit order ID");
@@ -130,6 +131,7 @@ export async function handleOrderQueue({
   await incrementCounterShopifyOrderCreatedUnhandled(orderId);
 
   const checkout = await getCheckoutByOrderId(orderId);
+  console.log("checkout found by order id")
   //const transactionIdMeta = await getTransactionId(shop, admin_graphql_api_id)
 
   const transactionId = checkout?.transaction_id;

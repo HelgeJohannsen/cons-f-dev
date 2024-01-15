@@ -11,8 +11,9 @@ import { authenticate } from "~/shopify.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const order_id =  BigInt(params.id!)
-  const checkout = getCheckoutByOrderId(order_id)
-  if (checkout == null) {
+  const checkout = await getCheckoutByOrderId(order_id)
+  if(checkout == null) {
+    console.log("orderid:", checkout)
     const response = json(false);
     response.headers.append("Access-Control-Allow-Origin", "*");
     return response;
