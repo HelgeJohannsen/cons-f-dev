@@ -25,13 +25,13 @@ const orderCreated = z.object({
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
-  // console.log(data); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
+   console.log("new webhook:"); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const parseResult = orderCreated.safeParse(data);
 
   if (parseResult.success) {
     const orderData = parseResult.data;
     // console.log("parsed oderData", orderData);
-    // console.log("payment_gateway_names", orderData.payment_gateway_names[0]);
+     console.log("payment_gateway_names", orderData.payment_gateway_names[0]);
     const isLive = await isAppLive(shop);
 
     if (orderData.checkout_token == undefined) {

@@ -42,7 +42,12 @@ function Extension() {
         }
         const data = await response.json();
         console.log("t",data);
-        setShowExt(data)
+  
+        await setShowExt(Boolean(data))
+        if(data == Boolean(data) ){
+          console.log("true",showExt);
+        }
+        console.log("show",showExt);
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }
@@ -51,7 +56,7 @@ function Extension() {
   }, []);
   //return `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`
   const link = `https://finanzieren.consorsfinanz.de/web/ecommerce/gewuenschte-rate?${parameters}`;
-  if (order && {showExt}) {
+  if (order && showExt) {
     return (
       <InlineLayout
         columns={["45%", "50%"]}
