@@ -2,10 +2,10 @@ import db from "../db.server";
 
 import { randomUUID } from "crypto";
 
-export function getCheckout(uuid: string) {
+export function getCheckout2(uuid: string) {
   return db.checkout.findUnique({ where: { uuid } });
 }
-export async function getCheckout2(uuid: string) {
+export async function getCheckout(uuid: string) {
   const checkout = await db.checkout.findUnique({ where: { uuid } });
   if(!checkout){
     console.log("kein checkout uuid",checkout)

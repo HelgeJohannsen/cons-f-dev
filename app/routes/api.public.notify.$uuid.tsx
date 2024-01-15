@@ -36,10 +36,10 @@ export async function action({ request, params }: LoaderArgs) {
     throw new Response("could not validate request", {status:401})  
   } */
 
-  const checkout1 = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
+  const checkoutByUUID = await getCheckout(params.uuid!); // TODO: is it valide to assume uuid is present on this Route ?
   const shop = "helge-test.myshopify.com"
   const orderID = params.uuid!
-  if (checkout1 == null) {
+  if (!checkoutByUUID) {
     console.log("orderID:", orderID)
    // const orderExists = await checkIfOrderExists(shop,orderID)
     // notification for a non existing checkout
