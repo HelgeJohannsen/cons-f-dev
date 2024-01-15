@@ -41,8 +41,7 @@ export function createCheckoutState(
   });
 }
 export async function createCheckoutByOrderID(shop: string, checkoutToken: string, orderId: number) {
-  return db.checkout
-    .create({ data: { uuid: checkoutToken, shop, orderId } })
+  return db.checkout.create({ data: { uuid: checkoutToken, shop, orderId } })
 }
 export async function getOrCreateCheckout(shop: string, checkoutToken: string) {
   //const res = await getCheckout(checkoutToken)

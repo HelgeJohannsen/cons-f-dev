@@ -86,11 +86,11 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
           return false;
         }
       } else {
-        // console.log("Order not handled becauseApp is offline");
+         console.log("Order not handled becauseApp is offline");
       }
     }
   } else {
-    // console.log("could not parse created Data:", data);
+     console.log("could not parse created Data:", data);
   }
   // const transactionId = await getTransactionId(shop, orderData.admin_graphql_api_id)
   // if(transactionId != undefined){
