@@ -50,7 +50,7 @@ export async function action({ request, params }: LoaderArgs) {
     const orderExists = true
     if(orderExists){
       const orderId = Number(params.uuid)
-      createCheckoutByOrderID(shop,params.uuid!, orderId)
+      createCheckoutByOrderID(shop!,params.uuid!, orderId)
       console.log("new Checkout created from notification")
     }
 
