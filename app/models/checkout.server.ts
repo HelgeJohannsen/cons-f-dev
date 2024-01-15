@@ -9,7 +9,13 @@ export function getCheckoutByTransactionId(transaction_id: string) {
   return db.checkout.findFirst({ where: { transaction_id } });
 }
 export function getCheckoutByOrderId(orderId: bigint) {
-  return db.checkout.findFirst({ where: { orderId } });
+  const checkout = db.checkout.findFirst({ where: { orderId } });
+  if(checkout != null){
+    console.log("checkout found by order id")
+    return true
+  }else{
+    return false
+  }
 }
 export function setOrderId(uuid: string, orderId: number) {
   // console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
