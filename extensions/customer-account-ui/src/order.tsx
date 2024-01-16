@@ -41,13 +41,7 @@ function Extension() {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("t",data);
-  
-        await setShowExt(Boolean(data))
-        if(data == Boolean(data) ){
-          console.log("true",showExt);
-        }
-        console.log("show",showExt);
+        setShowExt(Boolean(data))
       } catch (error) {
         console.error("Error fetching AppConfig:", error);
       }

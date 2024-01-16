@@ -14,6 +14,7 @@ show databases;
 use cons-f-dev;
  Select * from Config;
   Select * from Checkout;
+    Select * from Checkout order by createdAt;
  DELETE FROM ShopifyOrderCreatedUnhandled WHERE orderId=5781596373321;
 
  UPDATE Config

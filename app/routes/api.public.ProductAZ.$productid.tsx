@@ -3,7 +3,11 @@ import { authenticate } from "~/shopify.server";
 import { checkIfProductHasCollection } from "~/utils/graphql/product";
 
 export async function loader({ request,params }: LoaderArgs) {
-  const shop = "helge-test.myshopify.com"
+  const shop = process.env.SHOPIFY_SHOP
+  if(!shop){
+    console.log("shop undefined")
+    return false
+  }
   if(params.productid != null){
     const res = await checkIfProductHasCollection(shop, params.productid!)
   
