@@ -48,7 +48,7 @@ export async function orderMarkAsPaid(
       )
       .then((response) => {
         /*       console.log("order paid mutation headers: ",response.headers) */
-        // console.log("order paid mutation body: ", response.body);
+         console.log("order paid mutation body: ", response.body);
         return response;
       });
 
