@@ -77,7 +77,7 @@ export async function checkoutDebug() {
 export function checkoutAddTransactionId(uuid: string, transaction_id: string) {
   return db.checkout.update({ data: { transaction_id }, where: { uuid } });
 }
-export function setOrderName(orderId: number, orderName: string) {
-  // console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
+export function setOrderName(orderId: bigint, orderName: string) {
+  console.log(` --> setOrderId(orderId:${orderId}, orderName:${orderName})`);
   return db.checkout.update({ where: { orderId }, data: { orderName } });
 }
