@@ -145,19 +145,19 @@ export async function handleOrderQueue({
 
   const transactionId = checkout?.transaction_id;
   if (transactionId != undefined) {
-    // console.log("new checkout transactionId:", transactionId);
+     console.log("checkout missing transactionId:", transactionId);
     // TODO: current_total_price === proposal Amount
     const response = await getConsorsClient(shop).then((consorsClient) =>
       consorsClient?.provideOrderId(transactionId, checkout.name)
     );
     if (response === undefined) {
-      // console.error(`No consors Client for shop ${shop}`);
+       console.error(`No consors Client for shop ${shop}`);
       return false;
     } else if (response.status < 200 || response.status >= 300) {
-      // console.error(
-      //   `non 2xx response(${response.status}) from consorsApi.provideOrderId : `,
-      //   await response.text()
-      // );
+       console.error(
+         `non 2xx response(${response.status}) from consorsApi.provideOrderId : `,
+         await response.text()
+       );
       return false;
     } else {
       return true;
