@@ -30,7 +30,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
 
   if (parseResult.success) {
     const orderData = parseResult.data;
-    // console.log("parsed oderData", orderData);
+     console.log("parsed oderData", orderData);
      console.log("payment_gateway_names", orderData.payment_gateway_names[0]);
     const isLive = await isAppLive(shop);
 
