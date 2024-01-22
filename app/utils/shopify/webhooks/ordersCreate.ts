@@ -64,9 +64,9 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.current_total_price
             )
             
-          ).catch(() => {
+          ).catch(async() => {
             const uuid = String(orderData.id)
-            const checkout = createCheckoutByOrderID(shop,uuid!,orderData.id)
+            const checkout = await createCheckoutByOrderID(shop,uuid!,orderData.id)
             console.log("Checkout neu erstellt nur mit order ID");
           }
           )
