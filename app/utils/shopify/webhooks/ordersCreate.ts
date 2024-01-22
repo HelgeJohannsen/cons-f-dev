@@ -2,6 +2,7 @@ import {
   createCheckoutByOrderID,
   getCheckoutByOrderId,
   setOrderId,
+  setOrderName,
 } from "../../../models/checkout.server";
 
 import { getConsorsused } from "../../../utils/graphql/orderMetafields";
@@ -21,12 +22,13 @@ const orderCreated = z.object({
   current_total_price: z.string(),
   checkout_token: z.string().nullish(),
   payment_gateway_names: z.string().array(),
+  orderName: z.string(),
 });
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
-  console.log("payload:", payload);
+ // console.log("payload:", payload);
   const data = payload?.valueOf();
-  console.log("payload:", data);
+  //console.log("payload:", data);
    console.log("new webhook:"); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const parseResult = orderCreated.safeParse(data);
 
@@ -68,6 +70,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
             console.log("Checkout neu erstellt nur mit order ID");
           }
           )
+          setOrderName(orderData.id,orderData.orderName)
           addTags(
             shop,
             orderData.admin_graphql_api_id,
