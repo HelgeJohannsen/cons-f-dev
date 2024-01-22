@@ -21,7 +21,7 @@ export async function loader({ request }) {
   console.log("notify Request:", request.url);
   const appUrl = "https://sleeve-permit-sky-gadgets.trycloudflare.com"
   const requestedURL = new URL(request.url);
-  const orderid = requestedURL.searchParams.get("orderId");
+  const orderid = requestedURL.searchParams.get("orderID");
   try {
     const apiEndpoint = "/api/notify";
     if(orderid){
