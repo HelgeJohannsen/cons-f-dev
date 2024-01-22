@@ -20,11 +20,14 @@ export async function loader({ request }) {
   console.log("loeader")
   console.log("notify Request:", request.url);
   const appUrl = "https://sleeve-permit-sky-gadgets.trycloudflare.com"
-
+  const requestedURL = new URL(request.url);
+  const orderid = requestedURL.searchParams.get("orderId");
   try {
     const apiEndpoint = "/api/notify";
-    const requestUrl = `${appUrl}${apiEndpoint}`;
 
+    const parameters = new URLSearchParams({ orderID: orderid? });
+    const requestUrl = `${appUrl}${apiEndpoint}?${parameters}`;
+    console.log("requestUrl", requestUrl)
     const response = await fetch(requestUrl, { method: "GET" });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
