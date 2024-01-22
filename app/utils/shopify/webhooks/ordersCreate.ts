@@ -22,7 +22,7 @@ const orderCreated = z.object({
   current_total_price: z.string(),
   checkout_token: z.string().nullish(),
   payment_gateway_names: z.string().array(),
-  orderName: z.string(),
+  name: z.string(),
 });
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
@@ -70,7 +70,7 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
             console.log("Checkout neu erstellt nur mit order ID");
           }
           )
-          setOrderName(orderData.id,orderData.orderName)
+          setOrderName(orderData.id,orderData.name)
           addTags(
             shop,
             orderData.admin_graphql_api_id,
