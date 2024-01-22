@@ -16,15 +16,15 @@ import { orderMarkAsPaid } from "~/utils/graphql/markAsPaid";
 import { addTags } from "~/utils/graphql/order";
 import { checkIfOrderExists } from "~/utils/graphql/order";
 
-export async function action({ request, params }: LoaderArgs) {
-  console.log("action")
+export async function loader({ request }) {
+  console.log("loeader")
   console.log("notify Request:", request.url);
   return new Response("OK", {
     status: 200,
   });
 }
-export async function loeader({ request, params }: LoaderArgs) {
-  console.log("loeader")
+export async function action({ request, params }: LoaderArgs) {
+  console.log("action")
   console.log("notify Request:", request.url);
   return new Response("OK", {
     status: 200,
