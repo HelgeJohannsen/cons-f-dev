@@ -21,7 +21,7 @@ export async function action({ request, params }: LoaderArgs) {
    * Called by consors to signal signal sucess or failure of a finance request
    */
 
-  // console.log("notify Request:", request.url);
+   console.log("notify Request:", request.url);
 
   //TODO: is it necessary to validate request.method ?
 
