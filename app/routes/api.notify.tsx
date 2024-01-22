@@ -19,6 +19,21 @@ import { checkIfOrderExists } from "~/utils/graphql/order";
 export async function loader({ request }) {
   console.log("loeader")
   console.log("notify Request:", request.url);
+  const appUrl = "https://sleeve-permit-sky-gadgets.trycloudflare.com"
+
+  try {
+    const apiEndpoint = "/api/notify";
+    const requestUrl = `${appUrl}${apiEndpoint}`;
+
+    const response = await fetch(requestUrl, { method: "GET" });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("response", data)
+  } catch (error) {
+    console.error("Error fetching AppConfig:", error);
+  }
   return new Response("OK", {
     status: 200,
   });
