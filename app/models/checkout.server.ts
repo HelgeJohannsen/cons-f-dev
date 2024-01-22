@@ -26,6 +26,10 @@ export function setOrderId(uuid: string, orderId: number) {
   // console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
   return db.checkout.update({ where: { uuid }, data: { orderId } });
 }
+export function setOrderIdAndName(uuid: string, orderId: number, orderName: string) {
+  // console.log(` --> setOrderId(uuid:${uuid}, orderId:${orderId})`);
+  return db.checkout.update({ where: { uuid }, data: { orderId, orderName } });
+}
 export function getCheckoutState(
   checkout: Pick<NonNullable<Awaited<ReturnType<typeof getCheckout>>>, "uuid">
 ) {
@@ -53,6 +57,9 @@ export function createCheckoutState(
 }
 export async function createCheckoutByOrderID(shop: string, checkoutToken: string, orderId: number) {
   return db.checkout.create({ data: { uuid: checkoutToken, shop, orderId } })
+}
+export async function createCheckoutByOrderIDAndName(shop: string, checkoutToken: string, orderId: number, orderName: string) {
+  return db.checkout.create({ data: { uuid: checkoutToken, shop, orderId, orderName } })
 }
 export async function getOrCreateCheckout(shop: string, checkoutToken: string) {
   //const res = await getCheckout(checkoutToken)

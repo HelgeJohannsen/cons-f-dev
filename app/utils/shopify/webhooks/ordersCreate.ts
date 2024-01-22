@@ -1,7 +1,9 @@
 import {
   createCheckoutByOrderID,
+  createCheckoutByOrderIDAndName,
   getCheckoutByOrderId,
   setOrderId,
+  setOrderIdAndName,
   setOrderName,
 } from "../../../models/checkout.server";
 
@@ -53,9 +55,10 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
         ) {
           const orderId = String(orderData.id)
           //createCheckoutByOrderID(shop, orderId, orderData.id)
-          const createdShopifyOrderCreatedUnhandled = await setOrderId(
+          const createdShopifyOrderCreatedUnhandled = await setOrderIdAndName(
             orderData.checkout_token,
-            orderData.id
+            orderData.id,
+            orderData.name
           ).then(() =>
             createShopifyOrderCreatedUnhandled(
               shop,
@@ -64,9 +67,9 @@ export async function webbhook_oredersCreate(shop: string, payload: unknown) {
               orderData.current_total_price
             )
             
-          ).catch(async() => {
+          ).catch(() => {
             const uuid = String(orderData.id)
-            const checkout = await createCheckoutByOrderID(shop,uuid!,orderData.id)
+            createCheckoutByOrderIDAndName(shop,uuid!,orderData.id, orderData.name)
             console.log("Checkout neu erstellt nur mit order ID");
           }
           )
