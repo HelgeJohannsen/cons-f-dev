@@ -88,7 +88,7 @@ export class ConsorsAPI {
 
   async provideOrderId(
     transactionId: string,
-    subscriptionIdentifierExternal: bigint
+    subscriptionIdentifierExternal: string
   ) {
     const clientId = this.authData.vendorId;
     const consorsUrl = `https://api.consorsfinanz.de/ratanet-api/cfg/subscription/${clientId}/transaction/partnerdata?version=${CONSORS_API_VERSION}`;

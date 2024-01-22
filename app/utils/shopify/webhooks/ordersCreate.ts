@@ -148,7 +148,7 @@ export async function handleOrderQueue({
     // console.log("new checkout transactionId:", transactionId);
     // TODO: current_total_price === proposal Amount
     const response = await getConsorsClient(shop).then((consorsClient) =>
-      consorsClient?.provideOrderId(transactionId, orderId)
+      consorsClient?.provideOrderId(transactionId, checkout.name)
     );
     if (response === undefined) {
       // console.error(`No consors Client for shop ${shop}`);
