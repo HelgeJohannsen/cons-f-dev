@@ -145,7 +145,8 @@ export async function handleOrderQueue({
 
   const transactionId = checkout?.transaction_id;
   if (transactionId != undefined) {
-     console.log("checkout missing transactionId:", transactionId);
+     console.log("checkout with transactionId:", transactionId);
+     console.log("checkout with ordername:", checkout?.orderName);
     // TODO: current_total_price === proposal Amount
     const response = await getConsorsClient(shop).then((consorsClient) =>
       consorsClient?.provideOrderId(transactionId, checkout.name)
