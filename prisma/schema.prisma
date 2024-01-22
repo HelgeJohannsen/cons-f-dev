@@ -90,6 +90,7 @@ model Checkout {
   shop           String
   transaction_id String?
   orderId        BigInt?
+  orderName      String?
   statusHistory  CheckoutState[]
   createdAt      DateTime        @default(now())
 }

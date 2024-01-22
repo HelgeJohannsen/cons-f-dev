@@ -23,7 +23,7 @@ services:
       - DB_PORT=3306
 
   db:
-    container_name: dev_cons-f-dev.db
+    container_name: dev.db
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
     image: mariadb:10
     restart: always
