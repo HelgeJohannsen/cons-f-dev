@@ -25,6 +25,7 @@ const orderCreated = z.object({
 
 export async function webbhook_oredersCreate(shop: string, payload: unknown) {
   const data = payload?.valueOf();
+  console.log("payload:", data);
    console.log("new webhook:"); // as https://shopify.dev/docs/api/admin-rest/2023-01/resources/webhook#event-topics-orders-create
   const parseResult = orderCreated.safeParse(data);
 
