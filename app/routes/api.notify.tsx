@@ -24,16 +24,18 @@ export async function loader({ request }) {
   const orderid = requestedURL.searchParams.get("orderId");
   try {
     const apiEndpoint = "/api/notify";
-
-    const parameters = new URLSearchParams({ orderID: orderid? });
-    const requestUrl = `${appUrl}${apiEndpoint}?${parameters}`;
-    console.log("requestUrl", requestUrl)
-    const response = await fetch(requestUrl, { method: "GET" });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    if(orderid){
+      const parameters = new URLSearchParams({ orderID: orderid});
+      const requestUrl = `${appUrl}${apiEndpoint}?${parameters}`;
+      console.log("requestUrl", requestUrl)
+      const response = await fetch(requestUrl, { method: "GET" });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("response", data)
     }
-    const data = await response.json();
-    console.log("response", data)
+
   } catch (error) {
     console.error("Error fetching AppConfig:", error);
   }
