@@ -22,10 +22,11 @@ export async function loader({ request }) {
   const appUrl = "https://sleeve-permit-sky-gadgets.trycloudflare.com"
   const requestedURL = new URL(request.url);
   const orderid = requestedURL.searchParams.get("orderID");
+  const status = requestedURL.searchParams.get("status");
   try {
     const apiEndpoint = "/api/notify";
-    if(orderid){
-      const parameters = new URLSearchParams({ orderID: orderid});
+    if(orderid && status){
+      const parameters = new URLSearchParams({ orderID: orderid, status: status});
       const requestUrl = `${appUrl}${apiEndpoint}?${parameters}`;
       console.log("requestUrl", requestUrl)
       const response = await fetch(requestUrl, { method: "GET" });
