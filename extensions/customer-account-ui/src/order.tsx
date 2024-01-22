@@ -20,15 +20,16 @@ function Extension() {
   const cost = useTotalAmount();
   const textAmount = `${cost.amount}`;
   const order_id = order.id.split("Order/")[1];
+  const order_name = order.name;
   const [showExt, setShowExt] = useState(false);
 
   const parameters = new URLSearchParams({
     vendorid: "8403",
-    order_id: order_id,
+    order_id: order_name,
     order_amount: textAmount,
     notifyURL: `https://cons-f-dev.cpro-server.de/api/public/notify/${order_id}`,
   });
-
+console.log("name:", order_name)
   useEffect(() => {
     const getAppConfig = async () => {
       try {
