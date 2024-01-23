@@ -19,7 +19,7 @@ import { checkIfOrderExists } from "~/utils/graphql/order";
 export async function loader({ request }) {
   console.log("loeader")
   console.log("notify Request:", request.url);
-  const appUrl = "https://sleeve-permit-sky-gadgets.trycloudflare.com"
+  const appUrl = "https://target-liberal-failures-katrina.trycloudflare.com"
   const requestedURL = new URL(request.url);
   const orderid = requestedURL.searchParams.get("orderID");
   const status = requestedURL.searchParams.get("status");
